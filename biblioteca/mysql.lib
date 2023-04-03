@@ -1,0 +1,98 @@
+<?php
+
+class bancodedados {
+    public $host;
+    public $uname;
+    public $pwd;
+    public $database;
+    public $auth;
+    
+    public $tabelas;
+
+    function __construct($host, $uname, $pwd, $database) {
+        $this->host     = $host;
+        $this->uname    = $uname;
+        $this->pwd      = $pwd;
+        $this->database = $database;
+        $this->auth     = mysqli_connect($host, $uname, $pwd, $database);
+
+        mysqli_set_charset($this->auth, 'utf8');
+        if($this->auth->connect_error) {die("Falha ao realizar conexão: " . $auth->connect_error);}
+
+        $sql = "SHOW TABLES"; $select = $this->auth->query($sql);
+        if ($select) {
+            $array = array();
+            while($linha = mysqli_fetch_array($select)) {
+                ${$linha[0]} = $linha[0];
+                array_push($array, ${$linha[0]});
+            }
+            $this->tabelas = $array;
+        } else {
+            echo "Erro: " . $sql . "<br>" . $this->$auth->error;
+        }
+    }
+
+    function cadastrar($tabela, $atributos, $valores) {
+        $valores = convert_array_values($valores);
+        $sql = "INSERT INTO ". $tabela ." (". $atributos . ") VALUES (". $valores .")";
+
+        if($this->auth->query($sql) === TRUE) {
+            echo "Cadastro feito com sucesso!<br>";
+        } else {
+            echo "Erro: " . $sql . "<br>" . $this->auth->error;
+        }
+        $this->auth->close();
+    }
+
+    function buscar($tabela, $atributos, $referencia, $pesquisa) {
+        $sql = "SELECT $selecionar FROM $tabela WHERE $referencia = '$pesquisa'";
+        $select = $this->auth->query($sql);
+
+        if ($select) {
+            $array = array();
+            while($linha = mysqli_fetch_array($select)) {
+                for ($i = 0 ; $i < count($atributos) ; $i++) {
+                    ${"valor".$i} = $linha[$atributos[$i]];
+                    array_push($array, ${"valor".$i});
+                }
+            return $array;
+            }
+        } else {
+            echo "Erro: " . $sql . "<br>" . $this->auth->error;
+        }
+        $this->auth->close();
+    }
+
+    function descrever($tabela) {
+        $sql = "SHOW FIELDS FROM $tabela";
+        $select = $this->auth->query($sql);
+
+        if ($select) {
+            $array = array();
+            while($linha = mysqli_fetch_array($select)) {
+                ${$linha[0]} = $linha[0];
+                array_push($array, ${$linha[0]});
+            }
+            return $array;
+        } else {
+            echo "Erro: " . $sql . "<br>" . $conexao->error;
+        }
+        $this->auth->close();
+    }
+
+} include "auth_mysqli.php";
+
+function convert_array_values($array) {
+    $conversao = NULL; $i = 0;
+    foreach($array as $value) {
+        if($i == count($array)-1) {break;}
+        $conversao .= "'". $value ."',";
+        $i++;
+    }
+    $conversao .= "'". end($array) ."'";
+    return $conversao;
+}
+
+
+
+?>

@@ -1,7 +1,7 @@
 <?php
 
 session_start();
-include "biblioteca/mysqli.php";
+include "biblioteca/mysql.lib";
 
 if (isset($_POST['logar'])) {
 
@@ -9,7 +9,7 @@ if (isset($_POST['logar'])) {
     $senha = $_POST['password'];
 
     $tabela = "usuario";
-    $atributos = ["ID", "Email", "Senha"];
+    $atributos = "ID, Email, Senha";
     $referencia = "Email";
     $pesquisa = $login;
 
@@ -27,6 +27,7 @@ if (isset($_SESSION['usuario'])) {header('Location: '.'index.php'); die();}
 <html>
     <head>
         <title>Painel de Login</title>
+        <link rel="stylesheet" href="style.css">
         <meta charset="UTF-8">
     </head>
     <body>
