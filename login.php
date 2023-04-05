@@ -1,7 +1,15 @@
 <?php
 
-session_start();
 include "biblioteca/mysql.lib";
+
+$valores = ["a", "b", "c", "2020-02-02"];
+print_r($ecommerce->descrever("usuario"));
+echo "<hr>";
+//$ecommerce->cadastrar("usuario", "Email, Senha, Nome, Nascimento", $valores);
+$ecommerce->buscar("usuario", ["*"], "Email", "a");
+die();
+
+session_start();
 
 if (isset($_POST['logar'])) {
 
@@ -18,6 +26,7 @@ if (isset($_POST['logar'])) {
     if($login == $busca[1] AND $senha == $busca[2]) {
         $_SESSION['usuario'] = $busca[0];
     }
+
 }
 
 if (isset($_SESSION['usuario'])) {header('Location: '.'index.php'); die();}

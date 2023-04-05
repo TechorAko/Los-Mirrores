@@ -32,20 +32,48 @@ class bancodedados {
         }
     }
 
+    function error_msg() {echo "Erro: " . $sql . "<br>" . $this->auth->error;}
+
+    function descrever($tabela) {
+
+        // A função retorna um vetor com todos os nomes dos atributos presentes na tabela.
+
+        $sql = "SHOW FIELDS FROM $tabela";
+        $select = $this->auth->query($sql);
+    
+        if ($select) {
+            $array = array();
+            while($linha = mysqli_fetch_array($select)) { array_push($array, $linha[0]); }
+            return $array;
+        } else { $this->error_msg(); }
+    }
+
     function cadastrar($tabela, $atributos, $valores) {
+
+        /*
+            Cadastro de informações no banco de dados.
+            Deve seguir este padrão:
+
+            $tabela = tbExemplo;
+            $atributos = "ex_id, ex_nome, ex_desc, ..."
+            $valores = ["1", "Joaquim da Silva Pereira", "Ele foi muito mal na escola", ...]
+
+            Note que, $valores é um array. Ele será descompilado dentro da função.
+            A ordem dos atributos devem equivaler a ordem dos valores.
+        */
+
         $valores = convert_array_values($valores);
         $sql = "INSERT INTO ". $tabela ." (". $atributos . ") VALUES (". $valores .")";
 
         if($this->auth->query($sql) === TRUE) {
             echo "Cadastro feito com sucesso!<br>";
-        } else {
-            echo "Erro: " . $sql . "<br>" . $this->auth->error;
-        }
+        } else { $this->error_msg(); }
         $this->auth->close();
     }
 
     function buscar($tabela, $atributos, $referencia, $pesquisa) {
-        $sql = "SELECT $selecionar FROM $tabela WHERE $referencia = '$pesquisa'";
+        $sql = "SELECT ". convert_array_values($atributos) ." FROM $tabela WHERE $referencia = '$pesquisa'";
+        echo $sql;
         $select = $this->auth->query($sql);
 
         if ($select) {
@@ -57,26 +85,7 @@ class bancodedados {
                 }
             return $array;
             }
-        } else {
-            echo "Erro: " . $sql . "<br>" . $this->auth->error;
-        }
-        $this->auth->close();
-    }
-
-    function descrever($tabela) {
-        $sql = "SHOW FIELDS FROM $tabela";
-        $select = $this->auth->query($sql);
-
-        if ($select) {
-            $array = array();
-            while($linha = mysqli_fetch_array($select)) {
-                ${$linha[0]} = $linha[0];
-                array_push($array, ${$linha[0]});
-            }
-            return $array;
-        } else {
-            echo "Erro: " . $sql . "<br>" . $conexao->error;
-        }
+        } else { $this->error_msg(); }
         $this->auth->close();
     }
 
