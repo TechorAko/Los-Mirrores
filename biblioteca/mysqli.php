@@ -13,7 +13,7 @@ include "../conecta_mysqli.php";
 // A ordem dos atributos devem estar na mesma ordem dos valores.
 
 function cadastrar($tabela, $atributos, $valores) {
-    include '../conecta_mysqli.php';
+    include 'conecta_mysqli.php';
 
     $sql = "INSERT INTO ". $tabela ." (". $atributos .") VALUES (". $valores .")";
 
@@ -36,7 +36,7 @@ function cadastrar($tabela, $atributos, $valores) {
 
 function buscar($tabela, $atributos, $referencia, $pesquisa) {
 
-    include '../conecta_mysqli.php';
+    include 'conecta_mysqli.php';
 
     $selecionar = NULL;
     for($k = 0 ; $k < count($atributos)-1 ; $k++) {$selecionar .= $atributos[$k].",";}
