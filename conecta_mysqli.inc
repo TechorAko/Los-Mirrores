@@ -1,5 +1,12 @@
 <?php
 
+include "bibliotecas/mysqli.bli";
+
+$ecommerce = new bancodedados("localhost", "root", "", "ecommerce");
+$con = $ecommerce->con;
+
+/*
+
 $host = "localhost";
 $uname = "root";
 $pwd = "";
@@ -9,5 +16,7 @@ $con = mysqli_connect($host, $uname, $pwd, $database);
 
 mysqli_set_charset($con, 'utf8');
 if($con->connect_error) {die("Falha ao realizar conexão: " . $con->connect_error);}
+
+*/
 
 ?>

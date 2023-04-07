@@ -3,7 +3,12 @@
     session_start();
     include "conecta_mysqli.inc";
 
-    if(isset($_SESSION["user_id"])) { header('Location: '.'index.html'); die(); }
+    if(isset($_GET["sair"])) {
+        session_unset();
+        session_destroy();
+        header('Location: '. 'login.php');
+        die();
+    }
 
     if(isset($_POST["enviar"])) {
 
@@ -20,13 +25,14 @@
             }
         } else { echo "Erro: " . $sql . "<br>" . $con->error; }
 
-        if($login == $user_email && $senha = $user_senha) {
-            $_SESSION['user_id'] = $user_id;
-            header('Location: ', 'login.php');
+        if($login == $user_email && $senha == $user_senha) {
+            $_SESSION["user_id"] = $user_id;
+            header('Location: '. 'index.php');
             die();
-        }
-        else { echo "Erro: Usuário inválido."; }
+        } else { echo "Erro: Usuário inválido."; }
     }
+
+    if(isset($_SESSION["user_id"])) { header('Location: '. 'index.php'); die(); }
 
 ?>
 
@@ -45,5 +51,7 @@
             <br>
             <br><input type="submit" name="enviar" value="Entrar"><br>
         </form>
+
+        <button><a href="cadusu1.php">Criar Conta</button>
     </body>
 </html>
