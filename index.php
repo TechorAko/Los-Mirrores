@@ -1,13 +1,7 @@
 <?php
 
-include "conecta_mysqli.inc";
-
-print_r($ecommerce->selecionar_tudo("usuario"));
-
-die();
-
-session_start();
-if(!isset($_SESSION["user_id"])) { header('Location: '.'login.php'); die(); }
+include "bibliotecas/conecta_mysqli.inc";
+include "bibliotecas/ver_session.inc";
 
 ?>
 
@@ -18,9 +12,11 @@ if(!isset($_SESSION["user_id"])) { header('Location: '.'login.php'); die(); }
         <meta charset="UTF-8">
     </head>
     <body>
+        <h1>Área Administrativa</h1>
+        <hr>
         <a href="admin.php">Acessar</a>
         <br>
-        <br><a href="cadastro">Cadastro</a>
+        <br><a href="cadastro.php">Cadastro</a>
         <br><a href="alterar">Alterar</a>
         <br><a href="excluir">Excluir</a>
         <br><a href="buscar">Buscar</a>

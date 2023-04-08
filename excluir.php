@@ -1,5 +1,5 @@
 <?php 
-include 'conecta_mysql.inc';
+include 'bibliotecas/conecta_mysql.inc';
 
 $email = $_POST["email"];
 

@@ -19,7 +19,6 @@ class bancodedados {
         $this->pwd      = $pwd;
         $this->database = $database;
         $this->con      = mysqli_connect($host, $uname, $pwd, $database);
-        $this->tabelas  = [];
 
         mysqli_set_charset($this->con, 'utf8'); // Especifica o Charset.
         if($this->con->connect_error) { die("Falha ao realizar conexão: " . $this->con->connect_error); } // Se houver algum erro na conexão.
@@ -27,7 +26,7 @@ class bancodedados {
         $sql = "SHOW TABLES"; $select = $this->con->query($sql); // Resgatar um array das tabelas disponíveis no banco de dados.
         if ($select) {
             while($linha = mysqli_fetch_array($select, MYSQLI_NUM)) { // Pega uma linha por cada vez no registro (Anotação: MYSQLI_ASSOC = Nome ; MYSQLI_NUM = Números)
-                array_push($this->tabelas, $linha[0]); // Pega do primeiro registro da linha (o nome da tabela) e insere no array tabelas.
+                $this->tabelas[] = $linha[0];  // Pega do primeiro registro da linha (o nome da tabela) e insere no array tabelas.
             }
         } else { $this->error_msg(); }
 
@@ -35,55 +34,76 @@ class bancodedados {
 
     function error_msg() { echo "Erro: " . $sql . "<br>" . $this->$con->error; } // Mensagem de erro.
 
-    function inserir($table_name, $attributes, $values) {
-        $attributes_string = implode(',', $attributes); // Converte o array de atributos em uma string
-        $values_string = "'" . implode("','", $values) . "'"; // Converte o array de valores em uma string
+    function inserir($table_name, $values) { // Atributos e valores DEVEM ser arrays de dados para que possam ser compatíveis universalmente.
+
+        // Olá! Houve uma atualização neste código. Após descobrir que é possível definir e resgatar o indíce de um array, eu decidi que iriamos importar somente um array para a função.
+        // Mas se você precisar, eu fiz uma função mais abaixo nesta mesma biblioteca pra converter pra você inserir nessa função. Se chama conversion_index() :)
+
+        $attributes_string = implode(',', array_keys($values)); // Converte o array de atributos em uma string.
+        $values_string = "'" . implode("','", $values) . "'"; // Converte o array de valores em uma string.
     
         // Insere os dados na tabela
         $query = "INSERT INTO $table_name ($attributes_string) VALUES ($values_string)";
         mysqli_query($this->con, $query);
-        mysqli_close($this->con); // Fecha a conexão
 
         // Feedback
-        // echo "Usuário incluido com sucesso.";
-        // echo $table_name . "<br>" . $attributes_string . "<br>" . $values_string;
+        return "Usuário incluido com sucesso.";
     }
 
-    function selecionar_tudo($tabela) {
-        $sql = "SELECT * FROM usuario"; $select = $this->con->query($sql); // Utilizando o comando SELECT.
+    function exibir($tabela) {
+        $sql = "SELECT * FROM $tabela"; $select = $this->con->query($sql); // Utilizando o comando SELECT.
         if ($select) {
-            $array = [];
-            while($linha = mysqli_fetch_array($select, MYSQLI_NUM)) {
-                array_push($array,$linha);
-            }
-            return $array;
-        } else { error_msg(); }
+            while($linha = mysqli_fetch_array($select, MYSQLI_ASSOC)) { $array[] = $linha; } // Ele irá ler cada linha gerada na variável $linha individualmente e colocará dentro do $array, formando assim uma matriz com $array.
+            if(isset($array)) { return $array; } // Faz uma checagem se o array foi declarado ou recebeu algum valor, então retorna a variável se for verdade.
+            else { return "Erro: Nenhum valor encontrado."; } // Se nenhum valor for encontrado, ou algo der errado com o $array. Ele irá retornar um erro.
+        } else { $this->error_msg(); }
     }
 
+    function excluir($tabela, $onde, $valor) {
+        $sql = "DELETE FROM $tabela WHERE $onde ='$valor'"; // Comando para deletar o registro baseado em um valor dentro do registro.
+        if($this->con->query($sql) === TRUE) { return "Usuário excluído com sucesso!<br>"; } else { $this->error_msg(); } // Retorna um feedback se requisitado.
+    }
 
-    
+    function descrever($tabela) {
+        $sql = "SHOW FIELDS FROM $tabela"; 
+        $select = $this->con->query($sql);
 
+        if ($select) {
+            while($linha = mysqli_fetch_array($select)) { $array[] = $linha[0]; } // Pega todos os nomes dos atributos de uma tabela e bota em um array.
+            return $array;
+        } else { $this->error_msg(); }
+    }
 
+    function buscar($tabela, $atributos, $referencia, $pesquisa) {
+        $attributes_string = implode(',', $atributos); // Converte o array de atributos em uma string.
+        $sql = "SELECT ". $attributes_string ." FROM $tabela WHERE $referencia = '$pesquisa'";
+        $select = $this->con->query($sql);
 
-    
-    
+        if($select) {
+            while($linha = mysqli_fetch_array($select, MYSQLI_ASSOC)) { $array[] = $linha; }
+            if(isset($array)) { return $array; } // Faz uma checagem se o array foi declarado ou recebeu algum valor, então retorna a variável se for verdade.
+            else { return "Erro: Nenhum valor encontrado."; } // Se nenhum valor for encontrado, ou algo der errado com o $array. Ele irá retornar um erro.
+        } else { $this-error_msg(); }
+    }
 
+    function buscar_como($tabela, $atributos, $referencia, $pesquisa) {
+        $attributes_string = implode(',', $atributos); // Converte o array de atributos em uma string.
+        $sql = "SELECT ". $attributes_string ." FROM $tabela WHERE $referencia LIKE '%$pesquisa%'";
+        $select = $this->con->query($sql);
 
+        if($select) {
+            while($linha = mysqli_fetch_array($select, MYSQLI_ASSOC)) { $array[] = $linha; }
+            if(isset($array)) { return $array; } // Faz uma checagem se o array foi declarado ou recebeu algum valor, então retorna a variável se for verdade.
+            else { return "Erro: Nenhum valor encontrado."; } // Se nenhum valor for encontrado, ou algo der errado com o $array. Ele irá retornar um erro.
+        } else { $this-error_msg(); }
+    }
 
 }
 
-/*
-$sql = "SELECT * FROM usuario"; $select = $this->con->query($sql);
-        if ($select) {
-            $i = 0;
-            $array = [];
-            while($linha = mysqli_fetch_array($select, MYSQLI_NUM)) {
-                array_push($array,$linha);
-                $i++;
-            }
-            print_r($array[0][0]);
-        } else { echo "Erro: " . $sql . "<br>" . $this->$con->error; }
-*/
+function conversion_index($index, $valores) {
+    foreach($valores as $indice => $valor) { $array[$index[$indice]] = $valor; }
+    return $array;
+}
 
 ?>
 

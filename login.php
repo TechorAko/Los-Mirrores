@@ -1,7 +1,7 @@
 <?php
 
     session_start();
-    include "conecta_mysqli.inc";
+    include "bibliotecas/conecta_mysqli.inc";
 
     if(isset($_GET["sair"])) {
         session_unset();

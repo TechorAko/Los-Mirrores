@@ -1,6 +1,6 @@
 <?php
 
-include "conecta_mysqli.inc";
+include "bibliotecas/conecta_mysqli.inc";
 
 if (!isset($_GET['table'])) {header('Location: '.'geral.php?table=exibir'); die();}
 else {$table = $_GET['table'];}

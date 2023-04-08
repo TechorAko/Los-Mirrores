@@ -1,5 +1,5 @@
 <?php
-include 'conecta_mysqli.inc';
+include 'bibliotecas/conecta_mysqli.inc';
 $email = $_POST['mailus'];
 $senha = $_POST['senhauser'];
 $CPF = $_POST['CPFus'];
