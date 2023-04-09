@@ -51,7 +51,5 @@
             <br>
             <br><input type="submit" name="enviar" value="Entrar"><br>
         </form>
-
-        <button><a href="cadusu1.php">Criar Conta</button>
     </body>
 </html>

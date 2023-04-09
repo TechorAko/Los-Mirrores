@@ -13,15 +13,14 @@ if(isset($_POST["edit"])) {
             break;
 
         case "Excluir":
-            reset($form);
-            if($ecommerce->excluir($table, key($form), $form[key($form)])) { echo "Registro excluído com sucesso."; }
-            else { echo "Falha em excluir o registro."; }
+            $data["ID"] = $form["ID"];
+            $ecommerce->excluir($table, $data);
             break;
 
         default:
     }
 }
-if(isset($_GET["search"])) { $search = $_GET["search"]; $ref = $_GET["ref"]; }
+if(isset($_GET["search"])) { $search[$_GET["ref"]] = $_GET["search"]; }
 
 ?>
 <html>
@@ -51,7 +50,7 @@ if(isset($_GET["search"])) { $search = $_GET["search"]; $ref = $_GET["ref"]; }
                 <th>Opções</th>
             </tr>
                 <?php 
-                    if(!isset($search)) { $data = $ecommerce->exibir($table); } else { $data = $ecommerce->buscar_como($table, $atributos, $ref, $search); } // Se houver uma pesquisa, exibirá somente os registros da pesquisa.
+                    if(!isset($search)) { $data = $ecommerce->exibir($table); } else { $data = $ecommerce->buscar_como($table, $atributos, $search); } // Se houver uma pesquisa, exibirá somente os registros da pesquisa.
                     if(is_string($data) != 1) { // Verifica se há algo nos registros.
                         foreach ($data as $linha) { // Para cada linha da linha, será uma linha da tabela.
                             ?><form action="<?= $_SERVER['PHP_SELF'] . "?table=$table" ?>" method="POST"> <tr> <?php
@@ -69,7 +68,9 @@ if(isset($_GET["search"])) { $search = $_GET["search"]; $ref = $_GET["ref"]; }
                     <form action="<?=$_SERVER['PHP_SELF']?>" method="GET">
                         <input type="hidden" name="table" value="<?=$table?>">
                         <input type="text" size="25" name="search"> <select name="ref"> <?php
-                                foreach($atributos as $atributo) { ?> <option value="<?=$atributo?>"><?=$atributo?></option> <?php }
+                                foreach($atributos as $atributo) { 
+                                    if($atributo != "ID") { ?> <option value="<?=$atributo?>"><?=$atributo?></option> <?php }
+                                }
                         ?> </select>
                         <input type="submit" value="Pesquisar">
                     </form>

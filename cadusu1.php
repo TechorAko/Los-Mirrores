@@ -1,3 +1,4 @@
+
 <html>
     <title>Cadastre-se!</title>
     <meta charset="UTF-8">
@@ -15,7 +16,7 @@ Senha:<br> <input type="password" placeholder="Digite sua senha" name="senhauser
 </fieldset>
         <fieldset>
             <legend>Dados Pessoais</legend>
-        CPF:<br> <input oninput="mascara(this)" type="text" name="CPFus" placeholder="Digite seu CPF">
+        CPF:<br> <input oninput="mascaraCPF(this)" type="text" name="CPFus" placeholder="Digite seu CPF">
       <br><br>
       RG:  <br><select name="rg1">
                             <?php
@@ -24,7 +25,7 @@ Senha:<br> <input type="password" placeholder="Digite sua senha" name="senhauser
                                     ?><option value="<?=$sigla?>"><?=$sigla?></option><?php
                                 } 
                             ?>
-                             </select> - <input type="text" name="rg2" maxlength="14" size="6" placeholder="12.345.678" pattern="[0-9]{2}.[0-9]{3}.[0-9]{3}">
+                             </select> - <input type="text" name="rg2" maxlength="9" size="6"oninput="MascaraRG(event)" placeholder="12.345.678">
                             <br><br>
             Nome:<br> <input type="text" placeholder="Digite seu nome" maxlength="50" name="nomeus" required>
 
@@ -50,7 +51,7 @@ Sexo:<br>
 </body>
 
 <script>
-function mascara(i){
+function mascaraCPF(i){
    
     var v = i.value;
     
@@ -75,6 +76,13 @@ const phoneMask = (value) => {
   value = value.replace(/(\d{2})(\d)/,"($1) $2")
   value = value.replace(/(\d)(\d{4})$/,"$1-$2")
   return value
+}
+function MascaraRG(event) {
+  let input = event.target;
+  let value = input.value;
+  value = value.replace(/\D/g, '');
+  value = value.replace(/^(\d{2})(\d{3})(\d{3})$/, '$1.$2.$3');
+  input.value = value;
 }
 
 </script>

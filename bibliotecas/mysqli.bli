@@ -44,6 +44,7 @@ class bancodedados {
     
         // Insere os dados na tabela
         $query = "INSERT INTO $table_name ($attributes_string) VALUES ($values_string)";
+        echo $query;
         mysqli_query($this->con, $query);
 
         // Feedback
@@ -59,8 +60,11 @@ class bancodedados {
         } else { $this->error_msg(); }
     }
 
-    function excluir($tabela, $onde, $valor) {
-        $sql = "DELETE FROM $tabela WHERE $onde ='$valor'"; // Comando para deletar o registro baseado em um valor dentro do registro.
+    function excluir($tabela, $onde) {
+        foreach ($onde as $referencia => $pesquisa) { $where[] = "$referencia = '$pesquisa'"; } // Converte no formato MYSQL.
+        $where = implode(" AND ", $where); // Então converte em string para o uso no comando.
+
+        $sql = "DELETE FROM $tabela WHERE $where"; // Comando para deletar o registro baseado em um valor dentro do registro.
         if($this->con->query($sql) === TRUE) { return "Usuário excluído com sucesso!<br>"; } else { $this->error_msg(); } // Retorna um feedback se requisitado.
     }
 
@@ -74,9 +78,12 @@ class bancodedados {
         } else { $this->error_msg(); }
     }
 
-    function buscar($tabela, $atributos, $referencia, $pesquisa) {
+    function buscar($tabela, $atributos, $pesquisa) {
         $attributes_string = implode(',', $atributos); // Converte o array de atributos em uma string.
-        $sql = "SELECT ". $attributes_string ." FROM $tabela WHERE $referencia = '$pesquisa'";
+        foreach ($pesquisa as $referencia => $pesquisa) { $where[] = "$referencia = '$pesquisa'"; } // Converte no formato MYSQL.
+        $where = implode(" AND ", $where); // Então converte em string para o uso no comando.
+
+        $sql = "SELECT ". $attributes_string ." FROM $tabela WHERE $where";
         $select = $this->con->query($sql);
 
         if($select) {
@@ -86,9 +93,12 @@ class bancodedados {
         } else { $this-error_msg(); }
     }
 
-    function buscar_como($tabela, $atributos, $referencia, $pesquisa) {
+    function buscar_como($tabela, $atributos, $pesquisa) {
         $attributes_string = implode(',', $atributos); // Converte o array de atributos em uma string.
-        $sql = "SELECT ". $attributes_string ." FROM $tabela WHERE $referencia LIKE '%$pesquisa%'";
+        foreach ($pesquisa as $referencia => $pesquisa) { $where[] = "$referencia LIKE '%$pesquisa%'"; } // Converte no formato MYSQL.
+        $where = implode(" AND ", $where); // Então converte em string para o uso no comando.
+
+        $sql = "SELECT ". $attributes_string ." FROM $tabela WHERE $where";
         $select = $this->con->query($sql);
 
         if($select) {
@@ -96,6 +106,18 @@ class bancodedados {
             if(isset($array)) { return $array; } // Faz uma checagem se o array foi declarado ou recebeu algum valor, então retorna a variável se for verdade.
             else { return "Erro: Nenhum valor encontrado."; } // Se nenhum valor for encontrado, ou algo der errado com o $array. Ele irá retornar um erro.
         } else { $this-error_msg(); }
+    }
+
+    function alterar($tabela, $valores, $pesquisa) {
+        // Montar a lista de atributos e valores a serem atualizados
+        foreach ($valores as $atributo => $valor) { $set[] = "$atributo = '$valor'"; } // Converte no formato MYSQL.
+        $set = implode(", ", $set); // Então converte em string para o uso no comando.
+
+        foreach ($pesquisa as $referencia => $pesquisa) { $where[] = "$referencia = '$pesquisa'"; } // Converte no formato MYSQL.
+        $where = implode(" AND ", $where); // Então converte em string para o uso no comando.
+
+        $sql = "UPDATE $tabela SET $set WHERE $where";
+        if($conexao->query($sql) === TRUE){ return "Registro alterado com sucesso!"; } else { $this->error_msg(); }
     }
 
 }
