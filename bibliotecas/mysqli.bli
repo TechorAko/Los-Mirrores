@@ -39,12 +39,11 @@ class bancodedados {
         // Olá! Houve uma atualização neste código. Após descobrir que é possível definir e resgatar o indíce de um array, eu decidi que iriamos importar somente um array para a função.
         // Mas se você precisar, eu fiz uma função mais abaixo nesta mesma biblioteca pra converter pra você inserir nessa função. Se chama conversion_index() :)
 
-        $attributes_string = implode(',', array_keys($values)); // Converte o array de atributos em uma string.
+        $attributes_string = "`" . implode('`,`', array_keys($values)) . "`"; // Converte o array de atributos em uma string.
         $values_string = "'" . implode("','", $values) . "'"; // Converte o array de valores em uma string.
     
         // Insere os dados na tabela
         $query = "INSERT INTO $table_name ($attributes_string) VALUES ($values_string)";
-        echo $query;
         mysqli_query($this->con, $query);
 
         // Feedback

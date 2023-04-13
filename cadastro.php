@@ -101,7 +101,7 @@ if(isset($_POST["enviar"])) {
                                 </select>
                                 <br><label>Desconto Inicial:        </label> <input type="number" name="Desconto" step="1" placeholder="0%" min="0" max="99.9" required>
                                 <br><label>Quantidade de Estoque:   </label> <input type="number" name="Qtde" step="1" placeholder="1000" min="0" max="9999" required>
-                                <br><label> Descrição:              </label>
+                                <br><label>Descrição:               </label>
                                 <br><textarea cols=100 rows=5 placeholder="Descreva o seu produto com detalhes." name="Desc"></textarea><br>
                             <?php
                             break;
@@ -126,6 +126,46 @@ if(isset($_POST["enviar"])) {
                                 <br><label>Data de Admissão: </label><input type="date" name="Admissao" min="19<?=date("y")?>-<?=date("m")?>-<?=date("d")?>" max="20<?=date("y")?>-<?=date("m")?>-<?=date("d")?>" required>
                                 <br>
                             <?php
+                        case "avaliacao":
+                            ?>
+                            <br><label>Estrelas: </label><input type="number" name="Salario" step="1" placeholder="5" min="0" max="5" required>
+                            <br><label>Produto: </label>
+                            <select name="prod_id">
+                                <?php
+                                    $produtos = $ecommerce->exibir("produto");
+                                    foreach ($produtos as $index => $produto) { ?><option value="<?=$produto["ID"]?>"><?=$produto["Nome"]?></option><?php }
+                                ?>
+                            </select>
+                            <br><label>Usuário: </label>
+                            <select name="user_id">
+                                <?php
+                                    $usuarios = $ecommerce->exibir("usuario");
+                                    foreach ($usuarios as $index => $usuario) { ?><option value="<?=$usuario["ID"]?>"><?=$usuario["Nome"]?></option><?php }
+                                ?>
+                            </select>
+                            <br><label> Descrição: </label>
+                            <br><textarea cols=100 rows=5 placeholder="Descreva o seu produto com detalhes." name="Desc"></textarea><br>
+                            <?php
+                            break;
+                        case "carrinho":
+                            ?>
+                            <br><label>Produto: </label>
+                            <br><select name="prod_id" multiple>
+                                <?php
+                                    $produtos = $ecommerce->exibir("produto");
+                                    foreach ($produtos as $index => $produto) { ?><option value="<?=$produto["ID"]?>"><?=$produto["Nome"]?></option><?php }
+                                ?>
+                                </select>
+                            <?php
+                            break;
+                        case "cliente":
+                            ?>
+                            <?php
+                            break;
+                        case "pedido":
+                            ?>
+                            <?php
+                            break;
                         default: $table = "produto";
                     }
                 ?>

@@ -25,7 +25,7 @@
             }
         } else { echo "Erro: " . $sql . "<br>" . $con->error; }
 
-        if($login == $user_email && $senha == $user_senha) {
+        if(isset($user_email) && $login == $user_email && $senha == $user_senha) {
             $_SESSION["user_id"] = $user_id;
             header('Location: '. 'index.php');
             die();
