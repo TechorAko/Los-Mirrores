@@ -39,7 +39,7 @@ class bancodedados {
             if($array_value == NULL) { $array[] = $linha; } // Caso houver alguma especificação de qual valor dentro da linha for pego. (Para casos onde você queira pegar o nome por a caso, nunca surgiu essa necessidade, magina.)
             else { $array[] = $linha[$array_value]; } // Queria na verdade fazer isso sem condicional, mas não soube como botar essa linha de comando em palavras.
         }
-        if(isset($array)) { return $array; } else { return "Nenhum registro encontrado"; } // Verifica se algum valor foi de fato encontrado, caso o contrário retornará um aviso de que não foram encontrados registros.
+        if(isset($array)) { return $array; } else { return "Nenhum registro encontrado."; } // Verifica se algum valor foi de fato encontrado, caso o contrário retornará um aviso de que não foram encontrados registros.
     }
 
     function descrever($tabela) {
@@ -56,11 +56,11 @@ class bancodedados {
         if($this->con->query($sql) === TRUE) { return "Registro inserido com sucesso!<br>"; } else { $this->error_msg($sql); } // Retorna um feedback se requisitado.
     }
 
-    function alterar($tabela, $valores, $pesquisa) {
+    function alterar($tabela, $valores, $onde) {
         // Montar a lista de atributos e valores a serem atualizados
         foreach ($valores as $atributo => $valor) { $set[] = "$atributo = '$valor'"; } // Converte no formato MYSQL.
         $set = implode(", ", $set); // Então converte em string para o uso no comando.
-        foreach ($pesquisa as $referencia => $pesquisa) { $where[] = "$referencia = '$pesquisa'"; } // Converte no formato MYSQL.
+        foreach ($onde as $referencia => $pesquisa) { $where[] = "$referencia = '$pesquisa'"; } // Converte no formato MYSQL.
         $where = implode(" AND ", $where); // Então converte em string para o uso no comando.
 
         $sql = "UPDATE $tabela SET $set WHERE $where";
@@ -75,19 +75,18 @@ class bancodedados {
         if($this->con->query($sql) === TRUE) { return "Registro excluído com sucesso!<br>"; } else { $this->error_msg($sql); } // Retorna um feedback se requisitado.
     }
 
-    function buscar($tabela, $atributos = ["*"], $pesquisa = NULL, $como = FALSE) {
-        $atributos = implode(',', $atributos); // Converte o array de atributos em uma string.
-        $sql = "SELECT ". $atributos ." FROM $tabela";
+    function buscar($tabelas, $atributos = "*", $pesquisa = NULL, $como = FALSE) {
+        $tabelas = is_array($tabelas) ? "`". implode(", ", $tabelas) ."`" : $tabelas ;
+        $atributos = is_array($atributos) ?  implode(', ', $atributos) : $atributos; // Se for array, converte o array de atributos em uma string.
+        $sql = "SELECT ". $atributos ." FROM $tabelas";
 
         if($pesquisa != NULL) { // Verifica se há uma pesquisa.
             foreach ($pesquisa as $referencia => $pesquisa) {
-                if($como != TRUE) { $where[] = "$referencia = '$pesquisa'"; } // Verifica se o modo de pesquisa está COMO ou IGUAL.
-                else { $where[] = "$referencia LIKE '%$pesquisa%'";}
+                $where[] = $como ? "$referencia LIKE '%$pesquisa%'" : "$referencia = '$pesquisa'"; // Verifica se o modo de pesquisa está COMO ou IGUAL.
             } // Converte no formato MYSQL.
             $where = implode(" AND ", $where); // Então converte em string para o uso no comando.
             $sql .= " WHERE $where"; // E se todo processo ocorrer bem, a pesquisa será incluida.
         }
-
         return $this->fetch_multiarray($sql, MYSQLI_ASSOC);
     }
 

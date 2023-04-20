@@ -29,6 +29,13 @@ if(isset($_POST["enviar"])) {
         if(isset($_POST[$atributo])) { $data["$atributo"] = $_POST[$atributo]; } // Se o atributo existe, ele será enviado.
     }
 
+    function select_registro($tabelas, $multiple = FALSE) {
+        $tabelas = implode(', ', $tabelas);
+        $sql = "SELECT * FROM $tabelas";
+        
+        
+    }
+
     $ecommerce->inserir($table, $data);
 }
 
@@ -95,7 +102,7 @@ if(isset($_POST["enviar"])) {
                                 <br><label>Imagem:                  </label> <input type="file" name="Imagem">
                                 <br><label>Categoria:               </label> <select name="cat_id">
                                     <?php
-                                        $categorias = $ecommerce->exibir("categoria");
+                                        $categorias = $ecommerce->buscar("categoria");
                                         foreach ($categorias as $index => $categoria) { ?><option value="<?=$categoria["ID"]?>"><?=$categoria["Nome"]?></option><?php }
                                     ?>
                                 </select>
@@ -119,27 +126,28 @@ if(isset($_POST["enviar"])) {
                                 <br><label>Usuário: </label>
                                 <select name="user_id">
                                     <?php
-                                        $usuarios = $ecommerce->exibir("usuario");
+                                        $usuarios = $ecommerce->buscar("usuario");
                                         foreach ($usuarios as $index => $usuario) { ?><option value="<?=$usuario["ID"]?>"><?=$usuario["Nome"]?></option><?php }
                                     ?>
                                 </select>
                                 <br><label>Data de Admissão: </label><input type="date" name="Admissao" min="19<?=date("y")?>-<?=date("m")?>-<?=date("d")?>" max="20<?=date("y")?>-<?=date("m")?>-<?=date("d")?>" required>
                                 <br>
                             <?php
+                            break;
                         case "avaliacao":
                             ?>
                             <br><label>Estrelas: </label><input type="number" name="Salario" step="1" placeholder="5" min="0" max="5" required>
                             <br><label>Produto: </label>
                             <select name="prod_id">
                                 <?php
-                                    $produtos = $ecommerce->exibir("produto");
+                                    $produtos = $ecommerce->buscar("produto");
                                     foreach ($produtos as $index => $produto) { ?><option value="<?=$produto["ID"]?>"><?=$produto["Nome"]?></option><?php }
                                 ?>
                             </select>
                             <br><label>Usuário: </label>
                             <select name="user_id">
                                 <?php
-                                    $usuarios = $ecommerce->exibir("usuario");
+                                    $usuarios = $ecommerce->buscar("usuario");
                                     foreach ($usuarios as $index => $usuario) { ?><option value="<?=$usuario["ID"]?>"><?=$usuario["Nome"]?></option><?php }
                                 ?>
                             </select>
@@ -152,7 +160,7 @@ if(isset($_POST["enviar"])) {
                             <br><label>Produto: </label>
                             <br><select name="prod_id" multiple>
                                 <?php
-                                    $produtos = $ecommerce->exibir("produto");
+                                    $produtos = $ecommerce->buscar("produto");
                                     foreach ($produtos as $index => $produto) { ?><option value="<?=$produto["ID"]?>"><?=$produto["Nome"]?></option><?php }
                                 ?>
                                 </select>

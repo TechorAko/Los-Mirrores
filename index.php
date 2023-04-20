@@ -1,7 +1,7 @@
 <?php
 
-include "bibliotecas/conecta_mysqli.inc";
-include "bibliotecas/ver_session.inc";
+require_once "bibliotecas/conecta_mysqli.inc";
+require_once "bibliotecas/ver_session.inc";
 
 ?>
 

@@ -1,26 +1,27 @@
 <?php
 
-include "bibliotecas/conecta_mysqli.inc";
-include "bibliotecas/ver_session.inc";
+require_once "bibliotecas/conecta_mysqli.inc";
+require_once "bibliotecas/ver_session.inc";
 
 if(isset($_GET["table"])) { $table = $_GET["table"]; } else { header('Location: '. $_SERVER['PHP_SELF'] .'?table='. $ecommerce->tabelas[0]); die(); }
-if(isset($_POST["edit"])) {
-    foreach($ecommerce->descrever($table) as $atributo) { $form[$atributo] = $_POST[$atributo]; } // Pega todos os valores anteriormente enviados pelo formulário e os insere dentro de um array.
+if(isset($_REQUEST["edit"])) {
+    foreach($ecommerce->descrever($table) as $atributo) { // Pega todos os valores anteriormente enviados pelo formulário e os insere dentro de um array.
+        $atributo = $atributo["Field"];
+        $edit[$atributo] = $_POST[$atributo];
+    }
 
-    switch($_POST["edit"]) {
+    switch($_REQUEST["edit"]) {
         case "Alterar":
-            echo $_POST["edit"];
+            echo $_REQUEST["edit"];
             break;
-
         case "Excluir":
-            $data["ID"] = $form["ID"];
+            $data["ID"] = $edit["ID"];
             $ecommerce->excluir($table, $data);
             break;
-
         default:
     }
 }
-if(isset($_GET["search"])) { $search[$_GET["ref"]] = $_GET["search"]; }
+if(isset($_GET["search"])) { $search[$_GET["ref"]] = $_GET["search"]; } else { $search = NULL; }
 
 ?>
 <html>
@@ -45,13 +46,13 @@ if(isset($_GET["search"])) { $search[$_GET["ref"]] = $_GET["search"]; }
             <tr>
                 <?php
                     $atributos = $ecommerce->descrever($table);
-                    foreach ($atributos as $atributo) { ?> <th><?=$atributo?></th> <?php }
+                    foreach ($atributos as $atributo) { ?> <th><?=$atributo["Field"]?></th> <?php }
                 ?>
                 <th>Opções</th>
             </tr>
                 <?php 
-                    if(!isset($search)) { $data = $ecommerce->exibir($table); } else { $data = $ecommerce->buscar_como($table, $atributos, $search); } // Se houver uma pesquisa, exibirá somente os registros da pesquisa.
-                    if(is_string($data) != 1) { // Verifica se há algo nos registros.
+                    $data = $ecommerce->buscar($table, "*", $search, TRUE);
+                    if(is_array($data) == TRUE) { // Verifica se há algo nos registros.
                         foreach ($data as $linha) { // Para cada linha da linha, será uma linha da tabela.
                             ?><form action="<?= $_SERVER['PHP_SELF'] . "?table=$table" ?>" method="POST"> <tr> <?php
                                 foreach ($linha as $atributo => $registro) { // Para cada linha, conterá uma série de registros. ?>
@@ -61,16 +62,14 @@ if(isset($_GET["search"])) { $search[$_GET["ref"]] = $_GET["search"]; }
                                 <td><input type="submit" name="edit" value="Alterar"> <input type="submit" name="edit" value="Excluir"></td>
                             </tr></form> <?php
                         }
-                    } else { ?><td colspan="100" style="text-align: center;">Nenhum registro encontrado.</td><?php } // Mensagem que será exibida caso não houverem registros.
+                    } else { ?><td colspan="100" style="text-align: center;"><?=$data?></td><?php } // Mensagem que será exibida caso não houverem registros.
                 ?>
             <tr>
                 <td colspan="100" style="text-align: center;">
                     <form action="<?=$_SERVER['PHP_SELF']?>" method="GET">
                         <input type="hidden" name="table" value="<?=$table?>">
-                        <input type="text" size="25" name="search"> <select name="ref"> <?php
-                                foreach($atributos as $atributo) { 
-                                    if($atributo != "ID") { ?> <option value="<?=$atributo?>"><?=$atributo?></option> <?php }
-                                }
+                        <input type="text" size="25" name="search"> <select name="ref"> <?php 
+                                foreach($atributos as $atributo) { ?> <option value="<?=$atributo["Field"]?>"><?=$atributo["Field"]?></option> <?php }
                         ?> </select>
                         <input type="submit" value="Pesquisar">
                     </form>
@@ -80,7 +79,7 @@ if(isset($_GET["search"])) { $search[$_GET["ref"]] = $_GET["search"]; }
         <br>
         <form action="<?=$_SERVER['PHP_SELF']?>" method="GET">
             <select name="table"> <?php
-                foreach($ecommerce->tabelas as $tabelas) { ?><option value="<?=$tabelas?>" <?php if($table == $tabelas) { echo "selected";} ?>><?=$tabelas?></option><?php } ?>
+                foreach($ecommerce->tabelas as $tabelas) { ?><option value="<?=$tabelas?>" <?php if($table == $tabelas) { echo "selected"; } ?>><?=$tabelas?></option><?php } ?>
             </select>
             <input type="submit" value="Trocar">
         </form>
