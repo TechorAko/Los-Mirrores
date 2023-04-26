@@ -1,7 +1,5 @@
 <?php
 
-include "bibliotecas/mysqli.bli";
-
 $ecommerce = new bancodedados("localhost", "root", "", "ecommerce");
 $con = $ecommerce->con;
 

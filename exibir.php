@@ -1,5 +1,6 @@
 <?php
 
+require_once "bibliotecas/mysqli.bli";
 require_once "bibliotecas/conecta_mysqli.inc";
 require_once "bibliotecas/ver_session.inc";
 

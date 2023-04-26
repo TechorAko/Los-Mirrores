@@ -1,6 +1,7 @@
 <?php
 
     session_start();
+    require_once "bibliotecas/mysqli.bli";
     require_once "bibliotecas/conecta_mysqli.inc";
 
     if(isset($_REQUEST["sair"])) {

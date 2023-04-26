@@ -52,7 +52,7 @@ class bancodedados {
         $values_string = "'" . implode("','", $values) . "'"; // Converte o array de valores em uma string.
         
         // Insere os dados na tabela
-        $query = "INSERT INTO $table_name ($attributes_string) VALUES ($values_string)";
+        $sql = "INSERT INTO $table_name ($attributes_string) VALUES ($values_string)";
         if($this->con->query($sql) === TRUE) { return "Registro inserido com sucesso!<br>"; } else { $this->error_msg($sql); } // Retorna um feedback se requisitado.
     }
 
