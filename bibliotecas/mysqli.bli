@@ -58,12 +58,13 @@ class bancodedados {
 
     function alterar($tabela, $valores, $onde) {
         // Montar a lista de atributos e valores a serem atualizados
-        foreach ($valores as $atributo => $valor) { $set[] = "$atributo = '$valor'"; } // Converte no formato MYSQL.
+        foreach ($valores as $atributo => $valor) { $set[] = "`$atributo` = '$valor'"; } // Converte no formato MYSQL.
         $set = implode(", ", $set); // Então converte em string para o uso no comando.
         foreach ($onde as $referencia => $pesquisa) { $where[] = "$referencia = '$pesquisa'"; } // Converte no formato MYSQL.
         $where = implode(" AND ", $where); // Então converte em string para o uso no comando.
 
         $sql = "UPDATE $tabela SET $set WHERE $where";
+        echo $sql;
         if($this->con->query($sql) === TRUE){ return "Registro alterado com sucesso!"; } else { $this->error_msg($sql); }
     }
 

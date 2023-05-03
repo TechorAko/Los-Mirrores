@@ -13,7 +13,9 @@ if(isset($_REQUEST["edit"])) {
 
     switch($_REQUEST["edit"]) {
         case "Alterar":
-            echo $_REQUEST["edit"];
+            setcookie("edit", serialize($edit));
+            header("Location: cadastro.php?table=$table&edit=1");
+            die();
             break;
         case "Excluir":
             $data["ID"] = $edit["ID"];
@@ -33,7 +35,7 @@ if(isset($_GET["search"])) { $search[$_GET["ref"]] = $_GET["search"]; } else { $
         <style>
             table { width: 85%; }
             table, tr, td, th {
-                border: 1px solid black;
+                border: 1px solid;
                 border-collapse: collapse;
                 padding: 5px;
             }
