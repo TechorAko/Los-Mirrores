@@ -64,7 +64,6 @@ class bancodedados {
         $where = implode(" AND ", $where); // Então converte em string para o uso no comando.
 
         $sql = "UPDATE $tabela SET $set WHERE $where";
-        echo $sql;
         if($this->con->query($sql) === TRUE){ return "Registro alterado com sucesso!"; } else { $this->error_msg($sql); }
     }
 

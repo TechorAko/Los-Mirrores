@@ -15,8 +15,6 @@ require_once "bibliotecas/ver_session.inc";
     <body>
         <h1>Área Administrativa</h1>
         <hr>
-        <a href="admin.php">Acessar</a>
-        <br>
         <br><a href="cadastro.php">Cadastro</a>
         <br><a href="exibir.php">Exibir</a>
         <br>
