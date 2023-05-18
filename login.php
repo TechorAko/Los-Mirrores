@@ -1,32 +1,33 @@
 <?php
 
     session_start();
-    include "conecta_mysqli.inc";
+    require_once "bibliotecas/mysqli.bli";
+    require_once "bibliotecas/conecta_mysqli.inc";
 
-    if(isset($_SESSION["user_id"])) { header('Location: '.'index.html'); die(); }
+    if(isset($_REQUEST["sair"])) {
+        session_unset();
+        session_destroy();
+        header('Location: '. 'login.php');
+        die();
+    }
 
-    if(isset($_POST["enviar"])) {
+    if(isset($_REQUEST["enviar"])) {
 
         $login = $_POST["login"];
         $senha = $_POST["senha"];
 
         $sql = "SELECT ID, Email, Senha FROM usuario WHERE Email = '$login'";
-        $select = $con->query($sql);
-        if ($select) {
-            if($linha = mysqli_fetch_array($select)) {
-                $user_id     = $linha['ID'];
-                $user_email  = $linha['Email'];
-                $user_senha  = $linha['Senha'];
-            }
-        } else { echo "Erro: " . $sql . "<br>" . $con->error; }
+        $result = $con->query($sql);
+        $data = $result->fetch_array(MYSQLI_ASSOC);
 
-        if($login == $user_email && $senha = $user_senha) {
-            $_SESSION['user_id'] = $user_id;
-            header('Location: ', 'login.php');
+        if(isset($data) && $login == $data["Email"] && $senha == $data["Senha"]) {
+            $_SESSION["user_id"] = $data["ID"];
+            header('Location: '. 'index.php');
             die();
-        }
-        else { echo "Erro: Usuário inválido."; }
+        } else { echo "Erro: Usuário inválido."; }
     }
+
+    if(isset($_SESSION["user_id"])) { header('Location: '. 'index.php'); die(); }
 
 ?>
 
