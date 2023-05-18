@@ -1,8 +1,8 @@
 <?php
 
-require_once "bibliotecas/mysqli.bli";
-require_once "bibliotecas/conecta_mysqli.inc";
-require_once "bibliotecas/ver_session.inc";
+require_once "../bibliotecas/mysqli.bli";
+require_once "../bibliotecas/conecta_mysqli.inc";
+require_once "ver_session.inc";
 
 if(isset($_GET["table"])) { $table = $_GET["table"]; } else { header('Location: '. $_SERVER['PHP_SELF'] .'?table='. $ecommerce->tabelas[0]); die(); }
 if(isset($_REQUEST["edit"])) {
@@ -29,7 +29,7 @@ if(isset($_GET["search"])) { $search[$_GET["ref"]] = $_GET["search"]; } else { $
 ?>
 <html>
     <head>
-        <title>Área Administrativa</title>
+        <title>Exibição :: Área Administrativa</title>
         <link rel="stylesheet" href="style.css">
         <meta charset="UTF-8">
         <style>

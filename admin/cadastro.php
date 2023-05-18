@@ -1,8 +1,10 @@
 <?php
 
-require_once "bibliotecas/mysqli.bli";
-require_once "bibliotecas/conecta_mysqli.inc";
-require_once "bibliotecas/ver_session.inc";
+require_once "../bibliotecas/mysqli.bli";
+require_once "../bibliotecas/conecta_mysqli.inc";
+require_once "ver_session.inc";
+
+date_default_timezone_set("America/Fortaleza");
 
 $table = isset($_REQUEST["table"]) ? $_REQUEST["table"] : $ecommerce->tabelas[0];
 $edit = isset($_COOKIE["edit"]) ? unserialize($_COOKIE["edit"]) : NULL;
@@ -42,7 +44,7 @@ function select_foreign($ecommerce, $table, $foreign, $selected = NULL) { $data 
 }
 
 if(isset($_POST["enviar"])) {
-    if(isset($_POST["RG"])) { $_POST["RG"] = implode("-", $_POST["RG"]); }
+    if(isset($_POST["RG"]) && !empty($_POST["RG"][1])) { $_POST["RG"] = implode("-", $_POST["RG"]); } else { unset($_POST["RG"]); }
     if(isset($_FILES["Imagem"])) {
         $endereco = "imagens/";        
         $target_path = $endereco . basename($_FILES['Imagem']['name']);
@@ -130,18 +132,18 @@ if(isset($_POST["enviar"])) {
                                         <label>Nome:                </label> <input type="text" name="Nome" placeholder="Digite o seu nome" maxlength="100" size="25" <?php if(isset($edit["Nome"])) { ?>value="<?=$edit["Nome"]?>"<?php } ?> required>
                                     <br><label>Telefone:            </label> <input type="tel" name="Telefone" maxlength="19" placeholder="(00) 0000-000" <?php if(isset($edit["Telefone"])) { ?>value="<?=$edit["Telefone"]?>"<?php } ?>> <!-- onkeyup="handlePhone(event)" -->
                                     <br><label>Sexo:                </label> <input type="radio" name="Sexo" value="M" <?php if(isset($edit["Sexo"])) { echo selected($edit["Sexo"], "M", TRUE); } ?>>Masculino <input type="radio" name="Sexo" value="F" <?php if(isset($edit["Sexo"])) { echo selected($edit["Sexo"], "F", TRUE); } ?>> Feminino <input type="radio" name="Sexo" value="I" <?php if(isset($edit["Sexo"])) { echo selected($edit["Sexo"], "I", TRUE); } ?>> Intersexo
-                                    <br><label>Data de Nascimento:  </label> <input type="date" name="Nascimento" min="19<?=date("y")?>-<?=date("m")?>-<?=date("d")?>" max="20<?=date("y")?>-<?=date("m")?>-<?=date("d")?>" <?php if(isset($edit["Nascimento"])) { ?>value="<?=$edit["Nascimento"]?>"<?php } ?> required>
+                                    <br><label>Data de Nascimento:  </label> <input type="date" name="Nascimento" min="19<?=date("y")?>-<?=date("m")?>-<?=date("d")?>" max="<?=date("Y")-16?>-<?=date("m")?>-<?=date("d")?>" <?php if(isset($edit["Nascimento"])) { ?>value="<?=$edit["Nascimento"]?>"<?php } ?> required>
                                     <br><label>CPF:                 </label> <input type="text" name="CPF" placeholder="Digite seu CPF" <?php if(isset($edit["CPF"])) { ?>value="<?=$edit["CPF"]?>"<?php } ?>> <!-- oninput="mascaraCPF(this)" -->
                                     <br><label>RG:                  </label> <select name="RG[]">
                                         <?php
-                                            $RG = explode("-",$edit["RG"]);
+                                            $RG = (isset($edit["RG"]) && !empty($edit["RG"])) ? explode("-",$edit["RG"]) : NULL;
                                             $uf = ["AC","AL","AP","AM","BA","CE","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"];
-                                            foreach($uf as $sigla) { ?><option value="<?=$sigla?>" <?php if(isset($edit["RG"])) { echo selected($RG[0], $sigla); } ?>><?=$sigla?></option><?php } 
+                                            foreach($uf as $sigla) { ?><option value="<?=$sigla?>" <?php if(!empty($RG)) { echo selected($RG[0], $sigla); } ?>><?=$sigla?></option><?php } 
                                         ?>
-                                    </select> - <input type="text" name="RG[]" maxlength="10" size="6" placeholder="12.345.678" <?php if(isset($edit["RG"])) { ?>value="<?=$RG[1]?>"<?php } ?>> <!-- oninput="MascaraRG(event)" -->
-                                    <input type="hidden" name="DataCriacao" value="<?=date("Y-m-d h:i:s")?>">
+                                    </select> - <input type="text" name="RG[]" maxlength="10" size="6" placeholder="12.345.678" <?php if($RG != NULL) { ?>value="<?=$RG[1]?>"<?php } ?>> <!-- oninput="MascaraRG(event)" -->
+                                    <input type="hidden" name="DataCriacao" value="<?=date("Y-m-d H:i:s")?>">
                                 </fieldset>
-                            <?php
+                            <?php print_r($RG);
                             break;
                         case "categoria":
                             ?>
