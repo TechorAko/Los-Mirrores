@@ -21,7 +21,7 @@ Para a área administrativa, é necessário que o administrador tenha acesso aos
 Algumas das funções que se esperam dentro deste sistema para o auxílio das atividades administrativas na gestão dos dados são:
 
 - [x] Cadastro de Dados
-- [ ] Alteração
+- [x] Alteração
 - [x] Exclusão
 - [x] Exibição
 - [x] Pesquisa
