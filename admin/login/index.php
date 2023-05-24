@@ -1,17 +1,24 @@
 <?php
 
     session_start();
-    require_once "../bibliotecas/mysqli.bli";
-    require_once "../bibliotecas/conecta_mysqli";
+    require_once "../../bibliotecas/mysqli.bli";
+    require_once "../../bibliotecas/conecta_mysqli";
 
-    if(isset($_REQUEST["invalid"])) {
-        $alert = ["content" => "<b>Erro:</b> Acesso negado, o usuário é inválido. Tente novamente com uma conta de administrador.", "context" => "danger"];
+    if(isset($_GET["error"])) {
+        switch($_GET["error"]) {
+            case "forbidden":
+                $alert = ["content" => "<b>Erro:</b> Acesso negado, você não está logado. Por favor, entre com a sua conta.", "context" => "danger"];
+                break;
+            case "unauthorized":
+                $alert = ["content" => "<b>Erro:</b> Acesso negado, o usuário é inválido. Tente novamente com uma conta de administrador.", "context" => "danger"];
+            default: 
+        }
     }
 
     if(isset($_REQUEST["sair"]) && $_REQUEST["sair"] == 0) {
         session_unset();
         session_destroy();
-        header('Location: '. 'login.php?sair=1');
+        header('Location: '.$SERVER["PHP_SELF"].'?sair=1');
         die();
     } else if (isset($_REQUEST["sair"]) && $_REQUEST["sair"] == 1) {
         $alert = ["content" => "Você saiu da sua conta.", "context" => "warning"];
@@ -28,7 +35,7 @@
 
         if(isset($data) && $login == $data["Email"] && $senha == $data["Senha"]) {
             $_SESSION["user_id"] = $data["ID"];
-            header('Location: ./');
+            header('Location: ../');
             die();
         } else { $alert = ["content" => "<b>Erro:</b> Email e/ou senha errado(s). Por favor, tente novamente.", "context" => "danger"]; }
     }
@@ -40,12 +47,12 @@
 <html>
     <head>
         <title>Entrar - Los Mirrores (Administração)</title>
-        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="../style.css">
         <meta charset="UTF-8">
-        <?php include '../bibliotecas/bootstrap.html'; ?>
+        <?php include '../../bibliotecas/bootstrap.html'; ?>
     </head>
     <body class="bg-lightgray">
-        <?php include 'header.php'; ?>
+        <?php include '../header.php'; ?>
         <div class="container bg-light" style="width: 500px; padding: 25px; margin-top: 15px;">
             <div class="container d-flex justify-content-center"><h3>Olá, Administrador!</h3></div>
             <div class="container d-flex justify-content-center"><h4>Por favor, entre com sua conta.</h4></div>

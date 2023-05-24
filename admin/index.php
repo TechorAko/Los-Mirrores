@@ -29,8 +29,11 @@ else { $message = "Pronto para gerenciar o sistema?";}
     </head>
     <body>
         <?php include 'header.php'; ?>
-        <div class="container" style="margin: 25px">
-            <h4>Olá, <?=$username?>. <?=$message?></h4>
+        <div class="container" style="margin: 25px;">
+            <div class="jumbotron">
+                <h4>Olá, <?=$username?>.</h4>
+                <p><?=$message?></p>
+            </div>
             <div class="row">
             <div class="col-lg-3"></div>
         </div>

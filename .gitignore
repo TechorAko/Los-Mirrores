@@ -1,3 +1,5 @@
 
-admin/imagens/*
-!admin/imagens/.gitinclude
+assets/pfp/*
+assets/products_images/*
+!assets/pfp/.gitinclude
+!assets/products_images/.gitinclude

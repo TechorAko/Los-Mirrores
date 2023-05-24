@@ -36,7 +36,7 @@ class bancodedados {
         // Essa função tem em mente retornar uma matriz (ou array multidimensional) todas as linhas que forem forem retornadas do mysqli_fetch-array().
         $query = $this->con->query($sql); // Define o comando a ser utilizado.
         while ($linha = mysqli_fetch_array($query, $mode))  { // Enquanto houver linhas, será buscado. Obs: $mode está como padrão para MYSQLI_BOTH, o que significa que retornará um array com ambos os registros numerados e nomeados.
-            if($array_value == NULL) { $array[] = $linha; } // Caso houver alguma especificação de qual valor dentro da linha for pego. (Para casos onde você queira pegar o nome por a caso, nunca surgiu essa necessidade, magina.)
+            if(empty($array_value)) { $array[] = $linha; } // Caso houver alguma especificação de qual valor dentro da linha for pego. (Para casos onde você queira pegar o nome por a caso, nunca surgiu essa necessidade, magina.)
             else { $array[] = $linha[$array_value]; } // Queria na verdade fazer isso sem condicional, mas não soube como botar essa linha de comando em palavras.
         }
         if(isset($array)) { return $array; } else { return "Nenhum registro encontrado."; } // Verifica se algum valor foi de fato encontrado, caso o contrário retornará um aviso de que não foram encontrados registros.
@@ -58,13 +58,16 @@ class bancodedados {
 
     function alterar($tabela, $valores, $onde) {
         // Montar a lista de atributos e valores a serem atualizados
-        foreach ($valores as $atributo => $valor) { $set[] = "`$atributo` = '$valor'"; } // Converte no formato MYSQL.
+        foreach ($valores as $atributo => $valor) { // Converte no formato MYSQL.
+            if(empty($valor)) { $valor = "NULL"; } else { $valor = "'". addslashes($valor) ."'"; } // Checa se o valor é NULO através da string. Não achei uma solução melhor, então vai ficar assim mesmo.
+            $set[] = "`$atributo` = ". $valor;
+        }
         $set = implode(", ", $set); // Então converte em string para o uso no comando.
         foreach ($onde as $referencia => $pesquisa) { $where[] = "$referencia = '$pesquisa'"; } // Converte no formato MYSQL.
         $where = implode(" AND ", $where); // Então converte em string para o uso no comando.
 
         $sql = "UPDATE $tabela SET $set WHERE $where";
-        if($this->con->query($sql) === TRUE){ return "Registro alterado com sucesso!"; } else { $this->error_msg($sql); }
+        if($this->con->query($sql) === TRUE){ return TRUE; } else { return FALSE; }
     }
 
     function excluir($tabela, $onde) {
@@ -80,7 +83,7 @@ class bancodedados {
         $atributos = is_array($atributos) ?  implode(', ', $atributos) : $atributos; // Se for array, converte o array de atributos em uma string.
         $sql = "SELECT ". $atributos ." FROM $tabelas";
 
-        if($pesquisa != NULL) { // Verifica se há uma pesquisa.
+        if(!empty($pesquisa)) { // Verifica se há uma pesquisa.
             foreach ($pesquisa as $referencia => $pesquisa) {
                 $where[] = $como ? "$referencia LIKE '%$pesquisa%'" : "$referencia = '$pesquisa'"; // Verifica se o modo de pesquisa está COMO ou IGUAL.
             } // Converte no formato MYSQL.

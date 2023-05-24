@@ -1,7 +1,10 @@
 <?php
 
 session_start();
-if(!isset($_SESSION["user_id"])) { die("Erro: Acesso negado, o usuário não está logado. Por favor, faça o login antes de acessar a página.<br><a href='login.php?sair=1'>Voltar</a>"); }
+
+if(str_contains($_SERVER['SERVER_NAME'], "localhost")) { $path = "http://".$_SERVER["SERVER_NAME"]."/TechorAko/Los-Mirrores"; } else { $path = "http://".$_SERVER["SERVER_NAME"]."/admin"; }
+
+if(!isset($_SESSION["user_id"])) { if(str_contains($_SERVER['SCRIPT_NAME'], "/index.php")) { header("Location: login/"); die(); } else { header("Location: ". "http://".$_SERVER["SERVER_NAME"]."/TechorAko/Los-Mirrores"."/admin" ."/login/?error=forbidden"); die(); } }
 else {
     // Validação de usuário registrado.
 
@@ -9,7 +12,7 @@ else {
     $resultado = $con->query($sql); // Irá efetuar a pesquisa e ver se o resultado bate.
     if($resultado->fetch_array(MYSQLI_ASSOC)) { $resultado = TRUE; } else { $resultado = FALSE; }
 
-    if($resultado != TRUE) { die("Erro: Acesso negado, o usuário não tem permissão de acessar esta página.<br><a href='login.php?sair=1'>Voltar</a>"); }
+    if($resultado != TRUE) { header("Location: login/?error=unauthorized"); die(); }
     // Caso o contrário, a sessão será destruída e o usuário deverá logar novamente.
 }
 
