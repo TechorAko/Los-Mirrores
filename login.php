@@ -27,7 +27,7 @@
         } else { echo "Erro: Usuário inválido."; }
     }
 
-    if(isset($_SESSION["user_id"])) { header('Location: '. 'index.php'); die(); }
+    if(isset($_SESSION["user_id"])) { die(); header('Location: '. 'index.php'); die(); }
 
 ?>
 

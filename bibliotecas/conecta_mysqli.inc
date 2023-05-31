@@ -1,6 +1,6 @@
 <?php
 
-$ecommerce = new bancodedados("localhost", "root", "", "ecommerce");
+$ecommerce = new bancodedados("localhost", "root", "", "losmirrores");
 $con = $ecommerce->con;
 
 /*
