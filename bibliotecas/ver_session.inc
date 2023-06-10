@@ -5,7 +5,7 @@ if(!isset($_SESSION["user_id"])) { header('Location: '.'login.php'); die(); }
 else {
     // Validação de usuário registrado.
 
-    $sql = "SELECT usuario.ID, funcionario.user_id, funcionario.cargo FROM `usuario`, `funcionario` WHERE usuario.ID = '". $_SESSION["user_id"] ."' AND usuario.ID = funcionario.user_id AND funcionario.cargo = 'Gerente'";
+    $sql = "SELECT user_id FROM usuario WHERE user_id = '". $_SESSION["user_id"] ."'";
     $resultado = $con->query($sql); // Irá efetuar a pesquisa e ver se o resultado bate.
     if($resultado->fetch_array(MYSQLI_ASSOC)) { $resultado = TRUE; } else { $resultado = FALSE; }
 

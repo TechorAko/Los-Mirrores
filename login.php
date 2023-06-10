@@ -16,12 +16,12 @@
         $login = $_POST["login"];
         $senha = $_POST["senha"];
 
-        $sql = "SELECT ID, Email, Senha FROM usuario WHERE Email = '$login'";
+        $sql = "SELECT user_id, user_email, user_senha FROM usuario WHERE user_email = '$login'";
         $result = $con->query($sql);
         $data = $result->fetch_array(MYSQLI_ASSOC);
 
-        if(isset($data) && $login == $data["Email"] && $senha == $data["Senha"]) {
-            $_SESSION["user_id"] = $data["ID"];
+        if(isset($data) && $login == $data["user_email"] && $senha == $data["user_senha"]) {
+            $_SESSION["user_id"] = $data["user_id"];
             header('Location: '. 'index.php');
             die();
         } else { echo "Erro: Usuário inválido."; }
