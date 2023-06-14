@@ -95,6 +95,56 @@ class bancodedados {
         }
         return $this->fetch_multiarray($sql, MYSQLI_ASSOC);
     }
+    
+    function buscar2($tabelas, $atributos = "*", $pesquisa = NULL, $like = FALSE, $orderby = NULL, $groupby = NULL) {
+
+        // Verifica se o parâmetro tabela é um array
+        if (is_array($tabelas)) {
+            $tabelas = implode(', ', $tabelas);
+        }
+
+        // Verifica se o parâmetro atributos é um array
+        if (is_array($atributos)) {
+            $atributos = implode(', ', $atributos);
+        }
+
+        // Monta a cláusula WHERE da consulta
+        $where = '';
+        if ($pesquisa) {
+            foreach ($pesquisa as $atributo => $valor) {
+                $valor = addslashes($valor);
+                $operator = $like && is_string($valor) ? "LIKE" : "=";
+                if(!strpos($valor, ".")) { $valor = "'".$valor."'"; $operator = "="; }
+                $where .= ($where ? ' AND ' : '') . "$atributo $operator $valor";
+            }
+            $where = "WHERE $where";
+        }
+
+        // Monta a cláusula ORDER BY da consulta
+        $order = '';
+        if ($orderby !== null) {
+            if (is_array($orderby)) {
+                $order = 'ORDER BY ';
+                foreach ($orderby as $atributo => $direcao) {
+                    $order .= "$atributo $direcao, ";
+                }
+                $order = rtrim($order, ', ');
+            } else {
+                $order = "ORDER BY $orderby";
+            }
+        }
+
+        // Monta a cláusula GROUP BY da consulta
+        $group = '';
+        if ($groupby !== null) {
+            $group = "GROUP BY $groupby";
+        }
+
+        // Monta a consulta completa
+        $sql = "SELECT $atributos FROM $tabelas $where $group $order";
+
+        return $this->fetch_multiarray($sql, MYSQLI_ASSOC);
+    }
 }
 
 ?>
