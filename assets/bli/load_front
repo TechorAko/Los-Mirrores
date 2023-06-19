@@ -1,0 +1,6 @@
+<?php
+
+    require_once "http://" . $_SERVER['SERVER_NAME'] . "/Los-Mirrores/assets/bli/mysqli";
+    require_once "http://" . $_SERVER['SERVER_NAME'] . "/Los-Mirrores/assets/bli/conecta_mysqli";
+
+?>

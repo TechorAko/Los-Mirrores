@@ -1,4 +1,303 @@
 <?php
+    require_once "http://" . $_SERVER['SERVER_NAME'] . "/Los-Mirrores/assets/bli/load_front";
+?>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+        <title>Inicio - Los Mirrores</title>
+        <?php include_once "http://" . $_SERVER['SERVER_NAME'] . "/Los-Mirrores/assets/bli/bootstrap/"; ?>
+    </head>
+	<body>
+		<?php include_once "http://" . $_SERVER['SERVER_NAME'] . "/Los-Mirrores/assets/header.php"; ?>
+		<!-- SECTION -->
+		<div class="section">
+			<!-- container -->
+			<div class="container">
+				<!-- row -->
+				<div class="row">
+					<!-- shop -->
+					<?php
+		
+						$collections = $ecommerce->fetch_multiarray("SELECT cat_nome, prod_id, prod_nome FROM categoria, produto WHERE produto.cat_id = categoria.cat_id ORDER BY RAND() DESC LIMIT 3", MYSQLI_ASSOC);
+		
+						foreach($collections as $coll) { 
+							$imagem = $ecommerce->buscar("produto_galeria", "img_link", ["prod_id" => $coll["prod_id"]])[0]["img_link"];	
+					?>
+											
+					<div class="col-md-4 col-xs-6">
+						<div class="shop">
+							<div class="shop-img">
+								<img style="height:20vw; object-fit: cover; object-position: 50% 50%;" src="http://<?=$_SERVER['SERVER_NAME']?>/TechorAko/Los-Mirrores/assets/prod_img/<?=substr($imagem, -17)?>" alt="Imagem de exibição do produto" />
+							</div>
+							<div class="shop-body">
+								<h3>Categorias<br><?= $coll['cat_nome']?></h3>
+								<a href="http://<?=$_SERVER['SERVER_NAME']?>/Los-Mirrores/store.php?c=<?=$coll['cat_nome']?>" class="cta-btn">Comprar agora <i class="fa fa-arrow-circle-right"></i></a>
+							</div>
+						</div>
+					</div>
+					<!-- /shop -->
+					<?php }?>
+					<!-- shop -->
+					
+					<!-- /shop -->
+				</div>
+				<!-- /row -->
+			</div>
+			<!-- /container -->
+		</div>
+		<!-- /SECTION -->
+
+		<!-- SECTION -->
+		<div class="section">
+			<!-- container -->
+			<div class="container">
+				<!-- row -->
+				<div class="row">
+
+					<!-- section title -->
+					<div class="col-md-12">
+						<div class="section-title">
+							<h3 class="title">Novos Produtos</h3>
+							<div class="section-nav">
+								<ul class="section-tab-nav tab-nav">
+									<li class="active"><a data-toggle="tab" href="#tab1">Laptops</a></li>
+									<li><a data-toggle="tab" href="#tab2">Smartphones</a></li>
+									<li><a data-toggle="tab" href="#tab3">Cameras</a></li>
+									<li><a data-toggle="tab" href="#tab4">Accessories</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<!-- /section title -->
+
+					<!-- Products tab & slick -->
+					<div class="col-md-12">
+						<div class="row">
+							<div class="products-tabs">
+								<!-- tab -->
+								<div id="tab1" class="tab-pane active">
+									<div class="products-slick" data-nav="#slick-nav-1">
+										<?php
+
+											$novos_produtos = $ecommerce->fetch_multiarray("SELECT cat_nome, prod_id, prod_nome, prod_preco, prod_dscnt, prod_criado FROM categoria, produto WHERE produto.cat_id = categoria.cat_id ORDER BY prod_criado DESC LIMIT 10", MYSQLI_ASSOC);
+											foreach($novos_produtos as $produto) {
+
+										?>
+										<!-- product -->
+										<div class="product">
+											<div class="product-img">
+												<img src="<?=$ecommerce->buscar('produto_galeria', 'img_link', ['prod_id' => $produto['prod_id']])[0]['img_link']?>" alt="" height="250px;" style="object-fit: contain; object-position: 50% 50%;">
+												<div class="product-label">
+													<?php if(!empty($produto['prod_dscnt'])) { ?><span class="sale">-<?=$produto['prod_dscnt']?>%</span><?php } ?>
+													<span class="new">NOVO</span>
+												</div>
+											</div>
+											<div class="product-body">
+												<p class="product-category"><?=rtrim($produto['cat_nome'], 'es')?></p>
+												<h3 class="product-name">
+													<a href="#">
+														<?php
+
+															$max_name_length = 35;
+
+															if(strlen($produto['prod_nome']) < $max_name_length) {
+																echo $produto['prod_nome'];
+															} else {
+																echo substr($produto['prod_nome'], 0, $max_name_length)."...";
+															}
+
+														?>
+													</a>
+												</h3>
+												<h4 class="product-price">R$<?php if(empty($produto['prod_dscnt'])) { echo $produto['prod_preco']; } else { echo round($produto['prod_preco'] - ($produto['prod_preco'] * ($produto['prod_dscnt'] * 0.01)), 2).' <del class="product-old-price">R$'. $produto['prod_preco'] .'</del>'; } ?></h4>
+												<div class="product-rating">
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star"></i>
+												</div>
+												<div class="product-btns">
+													<button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to wishlist</span></button>
+													<button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
+													<button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
+												</div>
+											</div>
+											<div class="add-to-cart">
+												<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+											</div>
+										</div>
+										<!-- /product -->
+										<?php } ?>
+									</div>
+									<div id="slick-nav-1" class="products-slick-nav"></div>
+								</div>
+								<!-- /tab -->
+							</div>
+						</div>
+					</div>
+					<!-- Products tab & slick -->
+				</div>
+				<!-- /row -->
+			</div>
+			<!-- /container -->
+		</div>
+		<!-- /SECTION -->
+
+		<!-- HOT DEAL SECTION -->
+		<div id="hot-deal" class="section">
+			<!-- container -->
+			<div class="container">
+				<!-- row -->
+				<div class="row">
+					<div class="col-md-12">
+						<div class="hot-deal">
+							<ul class="hot-deal-countdown">
+								<li>
+									<div>
+										<h3>02</h3>
+										<span>Days</span>
+									</div>
+								</li>
+								<li>
+									<div>
+										<h3>10</h3>
+										<span>Hours</span>
+									</div>
+								</li>
+								<li>
+									<div>
+										<h3>34</h3>
+										<span>Mins</span>
+									</div>
+								</li>
+								<li>
+									<div>
+										<h3>60</h3>
+										<span>Secs</span>
+									</div>
+								</li>
+							</ul>
+							<h2 class="text-uppercase">hot deal this week</h2>
+							<p>New Collection Up to 50% OFF</p>
+							<a class="primary-btn cta-btn" href="#">Shop now</a>
+						</div>
+					</div>
+				</div>
+				<!-- /row -->
+			</div>
+			<!-- /container -->
+		</div>
+		<!-- /HOT DEAL SECTION -->
+
+		<!-- SECTION -->
+		<div class="section">
+			<!-- container -->
+			<div class="container">
+				<!-- row -->
+				<div class="row">
+
+					<!-- section title -->
+					<div class="col-md-12">
+						<div class="section-title">
+							<h3 class="title">Mais vendidos</h3>
+							<div class="section-nav">
+								<ul class="section-tab-nav tab-nav">
+									<li class="active"><a data-toggle="tab" href="#tab2">Laptops</a></li>
+									<li><a data-toggle="tab" href="#tab2">Smartphones</a></li>
+									<li><a data-toggle="tab" href="#tab2">Cameras</a></li>
+									<li><a data-toggle="tab" href="#tab2">Accessories</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<!-- /section title -->
+
+					<!-- Products tab & slick -->
+					<div class="col-md-12">
+						<div class="row">
+							<div class="products-tabs">
+								<!-- tab -->
+								<div id="tab2" class="tab-pane fade in active">
+									<div class="products-slick" data-nav="#slick-nav-2">
+										<!-- product -->
+										<?php
+
+											$mais_vendidos = $ecommerce->fetch_multiarray("SELECT cat_nome, prod_id, prod_nome, prod_preco, prod_dscnt, prod_criado, count(pedido.ped_id) as vendas FROM categoria, produto, pedido WHERE produto.cat_id = categoria.cat_id GROUP BY prod_id ORDER BY vendas DESC LIMIT 10", MYSQLI_ASSOC);
+											foreach($mais_vendidos as $produto) {
+
+										?>
+										<!-- product -->
+										<div class="product">
+											<div class="product-img">
+												<img src="<?=$ecommerce->buscar('produto_galeria', 'img_link', ['prod_id' => $produto['prod_id']])[0]['img_link']?>" alt="" height="250px;" style="object-fit: contain; object-position: 50% 50%;">
+												<div class="product-label">
+													<?php if(!empty($produto['prod_dscnt'])) { ?><span class="sale">-<?=$produto['prod_dscnt']?>%</span><?php } ?>
+												</div>
+											</div>
+											<div class="product-body">
+												<p class="product-category"><?=rtrim($produto['cat_nome'], 'es')?></p>
+												<h3 class="product-name">
+													<a href="#">
+														<?php
+
+															$max_name_length = 35;
+
+															if(strlen($produto['prod_nome']) < $max_name_length) {
+																echo $produto['prod_nome'];
+															} else {
+																echo substr($produto['prod_nome'], 0, $max_name_length)."...";
+															}
+
+														?>
+													</a>
+												</h3>
+												<h4 class="product-price">R$<?php if(empty($produto['prod_dscnt'])) { echo $produto['prod_preco']; } else { echo round($produto['prod_preco'] - ($produto['prod_preco'] * ($produto['prod_dscnt'] * 0.01)), 2).' <del class="product-old-price">R$'. $produto['prod_preco'] .'</del>'; } ?></h4>
+												<div class="product-rating">
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star"></i>
+												</div>
+												<div class="product-btns">
+													<button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to wishlist</span></button>
+													<button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
+													<button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
+												</div>
+											</div>
+											<div class="add-to-cart">
+												<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+											</div>
+										</div>
+										<!-- /product -->
+										<?php } ?>
+									</div>
+									<div id="slick-nav-2" class="products-slick-nav"></div>
+								</div>
+								<!-- /tab -->
+							</div>
+						</div>
+					</div>
+					<!-- /Products tab & slick -->
+				</div>
+				<!-- /row -->
+			</div>
+			<!-- /container -->
+		</div>
+		<!-- /SECTION -->
+
+		<?php include_once "http://" . $_SERVER['SERVER_NAME'] . "/Los-Mirrores/assets/footer.php" ?>
+
+		<?php include_once "http://" . $_SERVER['SERVER_NAME'] . "/Los-Mirrores/assets/bli/bootstrap/jquery_plugins.php"; ?>
+
+	</body>
+</html>
+
+
+<?php
+
+die();
 
 require_once "bibliotecas/mysqli.bli";
 require_once "bibliotecas/conecta_mysqli.inc";

@@ -33,6 +33,18 @@ class bancodedados {
 
     function error_msg($sql) { echo "Erro: " . $sql . "<br>" . $this->$con->error; } // Mensagem de erro.
 
+    function query($sql) {
+        if($this->con->query($sql)) {
+            if(isset($this->con->insert_id) && !empty($this->con->insert_id))  { $this->insert_id = $this->con->insert_id; }
+            return TRUE;
+        } else { return FALSE; }
+    }
+
+    function fetch_array($sql, $mode = MYSQLI_BOTH) {
+        $query = $this->con->query($sql);
+        return mysqli_fetch_array($query, $mode);
+    }
+
     function fetch_multiarray($sql, $mode = MYSQLI_BOTH, $array_value = NULL) {
         // Essa função tem em mente retornar uma matriz (ou array multidimensional) todas as linhas que forem forem retornadas do mysqli_fetch-array().
         $query = $this->con->query($sql); // Define o comando a ser utilizado.
@@ -40,7 +52,7 @@ class bancodedados {
             if($array_value == NULL) { $array[] = $linha; } // Caso houver alguma especificação de qual valor dentro da linha for pego. (Para casos onde você queira pegar o nome por a caso, nunca surgiu essa necessidade, magina.)
             else { $array[] = $linha[$array_value]; } // Queria na verdade fazer isso sem condicional, mas não soube como botar essa linha de comando em palavras.
         }
-        if(isset($array)) { return $array; } else { return "Nenhum registro encontrado."; } // Verifica se algum valor foi de fato encontrado, caso o contrário retornará um aviso de que não foram encontrados registros.
+        if(isset($array)) { return $array; } else { return NULL; } // Verifica se algum valor foi de fato encontrado, caso o contrário retornará um aviso de que não foram encontrados registros.
     }
 
     function descrever($tabela) {
@@ -69,7 +81,7 @@ class bancodedados {
         $where = implode(" AND ", $where); // Então converte em string para o uso no comando.
 
         $sql = "UPDATE $tabela SET $set WHERE $where";
-        if($this->con->query($sql) === TRUE){ return "Registro alterado com sucesso!"; } else { $this->error_msg($sql); }
+        if($this->con->query($sql) === TRUE){ return TRUE; } else { return FALSE; }
     }
 
     function excluir($tabela, $onde) {
@@ -77,26 +89,11 @@ class bancodedados {
         $where = implode(" AND ", $where); // Então converte em string para o uso no comando.
 
         $sql = "DELETE FROM $tabela WHERE $where"; // Comando para deletar o registro baseado em um valor dentro do registro.
+        $this->query($sql);
         if($this->con->query($sql) === TRUE) { return "Registro excluído com sucesso!<br>"; } else { $this->error_msg($sql); } // Retorna um feedback se requisitado.
     }
-
-    function buscar($tabelas, $atributos = "*", $pesquisa = NULL, $como = FALSE) {
-        $tabelas = is_array($tabelas) ? "`". implode(", ", $tabelas) ."`" : $tabelas ;
-        $atributos = is_array($atributos) ?  implode(', ', $atributos) : $atributos; // Se for array, converte o array de atributos em uma string.
-        $sql = "SELECT ". $atributos ." FROM $tabelas";
-
-        if($pesquisa != NULL && is_array($pesquisa)) { // Verifica se há uma pesquisa.
-            foreach ($pesquisa as $referencia => $pesquisar) {
-                $pesquisar = strpos($pesquisar, $tabelas) ? "'$pesquisar'" : $pesquisar;
-                $where[] = $como ? "$referencia LIKE '%$pesquisar%'" : "$referencia = $pesquisar"; // Verifica se o modo de pesquisa está COMO ou IGUAL.
-            } // Converte no formato MYSQL.
-            $where = implode(" AND ", $where); // Então converte em string para o uso no comando.
-            $sql .= " WHERE $where"; // E se todo processo ocorrer bem, a pesquisa será incluida.
-        }
-        return $this->fetch_multiarray($sql, MYSQLI_ASSOC);
-    }
     
-    function buscar2($tabelas, $atributos = "*", $pesquisa = NULL, $like = FALSE, $orderby = NULL, $groupby = NULL) {
+    function buscar($tabelas, $atributos = "*", $pesquisa = NULL, $like = FALSE, $orderby = NULL, $groupby = NULL, $limit = NULL) {
 
         // Verifica se o parâmetro tabela é um array
         if (is_array($tabelas)) {
@@ -113,8 +110,28 @@ class bancodedados {
         if ($pesquisa) {
             foreach ($pesquisa as $atributo => $valor) {
                 $valor = addslashes($valor);
-                $operator = $like && is_string($valor) ? "LIKE" : "=";
-                if(!strpos($valor, ".")) { $valor = "'".$valor."'"; $operator = "="; }
+
+                $operator = "=";
+
+                // Verifica se há o nome de uma tabela no atributo
+                if (strpos($atributo, '.') !== false) {
+                    $where .= ($where ? ' AND ' : '') . "$atributo = $valor";
+                    continue; // Pula para a próxima iteração
+                }
+
+                // Verifica se o valor é vazio
+                if (empty($valor)) {
+                    $where .= ($where ? ' AND ' : '') . "$atributo IS NULL";
+                    continue; // Pula para a próxima iteração
+                }
+
+                // Formata o texto para uso com o operador LIKE
+                if ($like && is_string($valor)) {
+                    $valor = "%$valor%";
+                    $operator = "LIKE";
+                }
+
+                $valor = "'".addslashes($valor)."'";
                 $where .= ($where ? ' AND ' : '') . "$atributo $operator $valor";
             }
             $where = "WHERE $where";
@@ -140,12 +157,16 @@ class bancodedados {
             $group = "GROUP BY $groupby";
         }
 
-        // Monta a consulta completa
-        $sql = "SELECT $atributos FROM $tabelas $where $group $order";
+        $limited = '';
+        if ($limit !== null) {
+            $limited = "LIMIT $limit";
+        }
 
+        // Monta a consulta completa
+        $sql = "SELECT $atributos FROM $tabelas $where $group $order $limited";
+        $this->query($sql);
         return $this->fetch_multiarray($sql, MYSQLI_ASSOC);
     }
 }
 
 ?>
-
