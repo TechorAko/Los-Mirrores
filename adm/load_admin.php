@@ -2,8 +2,8 @@
 
     if(!str_contains($_SERVER["SERVER_NAME"], "localhost")) { $path = "http://". $_SERVER["SERVER_NAME"]; } else { $path = "http://". $_SERVER["SERVER_NAME"] ."/TechorAko/Los-Mirrores"; }
 
-    require_once "$path/bibliotecas/mysqli.bli";
-    require_once "$path/bibliotecas/conecta_mysqli.inc";
+    require_once "http://". $_SERVER["SERVER_NAME"] ."/Los-Mirrores/assets/bli/mysqli";
+    require_once "http://". $_SERVER["SERVER_NAME"] ."/Los-Mirrores/assets/bli/conecta_mysqli";
 
     if(!str_contains($_SERVER["PHP_SELF"], "login.php")) {
         session_start();

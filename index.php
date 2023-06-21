@@ -58,14 +58,6 @@
 					<div class="col-md-12">
 						<div class="section-title">
 							<h3 class="title">Novos Produtos</h3>
-							<div class="section-nav">
-								<ul class="section-tab-nav tab-nav">
-									<li class="active"><a data-toggle="tab" href="#tab1">Laptops</a></li>
-									<li><a data-toggle="tab" href="#tab2">Smartphones</a></li>
-									<li><a data-toggle="tab" href="#tab3">Cameras</a></li>
-									<li><a data-toggle="tab" href="#tab4">Accessories</a></li>
-								</ul>
-							</div>
 						</div>
 					</div>
 					<!-- /section title -->
@@ -85,17 +77,17 @@
 										?>
 										<!-- product -->
 										<div class="product">
-											<div class="product-img">
-												<img src="<?=$ecommerce->buscar('produto_galeria', 'img_link', ['prod_id' => $produto['prod_id']])[0]['img_link']?>" alt="" height="250px;" style="object-fit: contain; object-position: 50% 50%;">
-												<div class="product-label">
-													<?php if(!empty($produto['prod_dscnt'])) { ?><span class="sale">-<?=$produto['prod_dscnt']?>%</span><?php } ?>
-													<span class="new">NOVO</span>
+											<a href="<?="http://" . $_SERVER['SERVER_NAME'] . "/Los-Mirrores/produto.php?p=" . $produto['prod_id']?>">
+												<div class="product-img">
+													<img src="<?=$ecommerce->buscar('produto_galeria', 'img_link', ['prod_id' => $produto['prod_id']])[0]['img_link']?>" alt="" height="250px;" style="object-fit: contain; object-position: 50% 50%;">
+													<div class="product-label">
+														<?php if(!empty($produto['prod_dscnt'])) { ?><span class="sale">-<?=$produto['prod_dscnt']?>%</span><?php } ?>
+														<span class="new">NOVO</span>
+													</div>
 												</div>
-											</div>
-											<div class="product-body">
-												<p class="product-category"><?=rtrim($produto['cat_nome'], 'es')?></p>
-												<h3 class="product-name">
-													<a href="#">
+												<div class="product-body">
+													<p class="product-category"><?=rtrim($produto['cat_nome'], 'es')?></p>
+													<h3 class="product-name">
 														<?php
 
 															$max_name_length = 35;
@@ -107,24 +99,14 @@
 															}
 
 														?>
-													</a>
-												</h3>
-												<h4 class="product-price">R$<?php if(empty($produto['prod_dscnt'])) { echo $produto['prod_preco']; } else { echo round($produto['prod_preco'] - ($produto['prod_preco'] * ($produto['prod_dscnt'] * 0.01)), 2).' <del class="product-old-price">R$'. $produto['prod_preco'] .'</del>'; } ?></h4>
-												<div class="product-rating">
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
+													</h3>
+													<h4 class="product-price">R$<?php if(empty($produto['prod_dscnt'])) { echo $produto['prod_preco']; } else { echo round($produto['prod_preco'] - ($produto['prod_preco'] * ($produto['prod_dscnt'] * 0.01)), 2).' <del class="product-old-price">R$'. $produto['prod_preco'] .'</del>'; } ?></h4>
 												</div>
-												<div class="product-btns">
-													<button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to wishlist</span></button>
-													<button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
-													<button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
-												</div>
-											</div>
+											</a>
 											<div class="add-to-cart">
-												<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+												<form action="<?=$_SERVER['PHP_SELF']?>" method="POST">
+													<button class="add-to-cart-btn" style="padding: 10px; padding-top: 8px;" type="submit" name="addcarrinho" value="<?=$produto['prod_id']?>">Adicionar ao carrinho</button>
+												</form>
 											</div>
 										</div>
 										<!-- /product -->
@@ -152,35 +134,8 @@
 				<div class="row">
 					<div class="col-md-12">
 						<div class="hot-deal">
-							<ul class="hot-deal-countdown">
-								<li>
-									<div>
-										<h3>02</h3>
-										<span>Days</span>
-									</div>
-								</li>
-								<li>
-									<div>
-										<h3>10</h3>
-										<span>Hours</span>
-									</div>
-								</li>
-								<li>
-									<div>
-										<h3>34</h3>
-										<span>Mins</span>
-									</div>
-								</li>
-								<li>
-									<div>
-										<h3>60</h3>
-										<span>Secs</span>
-									</div>
-								</li>
-							</ul>
-							<h2 class="text-uppercase">hot deal this week</h2>
-							<p>New Collection Up to 50% OFF</p>
-							<a class="primary-btn cta-btn" href="#">Shop now</a>
+							<h2 class="text-uppercase">Promoção esta semana!</h2>
+							<p>Novas coleções com 50% de desconto</p>
 						</div>
 					</div>
 				</div>
@@ -201,14 +156,6 @@
 					<div class="col-md-12">
 						<div class="section-title">
 							<h3 class="title">Mais vendidos</h3>
-							<div class="section-nav">
-								<ul class="section-tab-nav tab-nav">
-									<li class="active"><a data-toggle="tab" href="#tab2">Laptops</a></li>
-									<li><a data-toggle="tab" href="#tab2">Smartphones</a></li>
-									<li><a data-toggle="tab" href="#tab2">Cameras</a></li>
-									<li><a data-toggle="tab" href="#tab2">Accessories</a></li>
-								</ul>
-							</div>
 						</div>
 					</div>
 					<!-- /section title -->
@@ -229,45 +176,35 @@
 										?>
 										<!-- product -->
 										<div class="product">
-											<div class="product-img">
-												<img src="<?=$ecommerce->buscar('produto_galeria', 'img_link', ['prod_id' => $produto['prod_id']])[0]['img_link']?>" alt="" height="250px;" style="object-fit: contain; object-position: 50% 50%;">
-												<div class="product-label">
-													<?php if(!empty($produto['prod_dscnt'])) { ?><span class="sale">-<?=$produto['prod_dscnt']?>%</span><?php } ?>
+											<a href="<?="http://" . $_SERVER['SERVER_NAME'] . "/Los-Mirrores/produto.php?p=" . $produto['prod_id']?>">
+												<div class="product-img">
+													<img src="<?=$ecommerce->buscar('produto_galeria', 'img_link', ['prod_id' => $produto['prod_id']])[0]['img_link']?>" alt="" height="250px;" style="object-fit: contain; object-position: 50% 50%;">
+													<div class="product-label">
+														<?php if(!empty($produto['prod_dscnt'])) { ?><span class="sale">-<?=$produto['prod_dscnt']?>%</span><?php } ?>
+													</div>
 												</div>
-											</div>
-											<div class="product-body">
-												<p class="product-category"><?=rtrim($produto['cat_nome'], 'es')?></p>
-												<h3 class="product-name">
-													<a href="#">
-														<?php
+												<div class="product-body">
+													<p class="product-category"><?=rtrim($produto['cat_nome'], 'es')?></p>
+													<h3 class="product-name">
+															<?php
 
-															$max_name_length = 35;
+																$max_name_length = 35;
 
-															if(strlen($produto['prod_nome']) < $max_name_length) {
-																echo $produto['prod_nome'];
-															} else {
-																echo substr($produto['prod_nome'], 0, $max_name_length)."...";
-															}
+																if(strlen($produto['prod_nome']) < $max_name_length) {
+																	echo $produto['prod_nome'];
+																} else {
+																	echo substr($produto['prod_nome'], 0, $max_name_length)."...";
+																}
 
-														?>
-													</a>
-												</h3>
-												<h4 class="product-price">R$<?php if(empty($produto['prod_dscnt'])) { echo $produto['prod_preco']; } else { echo round($produto['prod_preco'] - ($produto['prod_preco'] * ($produto['prod_dscnt'] * 0.01)), 2).' <del class="product-old-price">R$'. $produto['prod_preco'] .'</del>'; } ?></h4>
-												<div class="product-rating">
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
+															?>
+													</h3>
+													<h4 class="product-price">R$<?php if(empty($produto['prod_dscnt'])) { echo $produto['prod_preco']; } else { echo round($produto['prod_preco'] - ($produto['prod_preco'] * ($produto['prod_dscnt'] * 0.01)), 2).' <del class="product-old-price">R$'. $produto['prod_preco'] .'</del>'; } ?></h4>
 												</div>
-												<div class="product-btns">
-													<button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to wishlist</span></button>
-													<button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
-													<button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
-												</div>
-											</div>
+											</a>
 											<div class="add-to-cart">
-												<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+												<form action="<?=$_SERVER['PHP_SELF']?>" method="POST">
+													<button class="add-to-cart-btn" type="submit" name="addcarrinho" value="<?=$produto['prod_id']?>"><i class="fa fa-shopping-cart"></i> add to cart</button>
+												</form>
 											</div>
 										</div>
 										<!-- /product -->

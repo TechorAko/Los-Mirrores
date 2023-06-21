@@ -3,4 +3,11 @@
     require_once "http://" . $_SERVER['SERVER_NAME'] . "/Los-Mirrores/assets/bli/mysqli";
     require_once "http://" . $_SERVER['SERVER_NAME'] . "/Los-Mirrores/assets/bli/conecta_mysqli";
 
+    if(isset($_REQUEST['addcarrinho'])) {
+        $carrinho = isset($_COOKIE['carrinho']) ? unserialize($_COOKIE['carrinho']) : array();
+        $carrinho[$_REQUEST['addcarrinho']] = isset($_REQUEST['qtde']) ? $_REQUEST['qtde'] : 1;
+        setcookie('carrinho', serialize($carrinho), time() + 86400);
+        header('Location: '. $_SERVER['PHP_SELF']);
+        die();
+    }
 ?>

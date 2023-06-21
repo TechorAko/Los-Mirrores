@@ -1,7 +1,7 @@
 <?php
 
 session_start();
-if(!isset($_SESSION["user_id"])) { header('Location: '.); die(); }
+if(!isset($_SESSION["user_id"])) { header('Location: '.'http://'.$_SERVER['SERVER_NAME'].'/Los-Mirrores/login.php'); die(); }
 else {
     // Validação de usuário registrado.
 
@@ -9,7 +9,7 @@ else {
     $resultado = $con->query($sql); // Irá efetuar a pesquisa e ver se o resultado bate.
     if($resultado->fetch_array(MYSQLI_ASSOC)) { $resultado = TRUE; } else { $resultado = FALSE; }
 
-    if($resultado != TRUE) { die("Erro: Acesso negado, o usuário não tem permissão de acessar esta página.<br><a href='login.php?sair=1'>Voltar</a>"); }
+    if($resultado != TRUE) { die("Erro: Acesso negado, o usuário não tem permissão de acessar esta página.<br><a href='http://".$_SERVER['SERVER_NAME']."/Los-Mirrores/login.php'>Voltar</a>"); }
     // Caso o contrário, a sessão será destruída e o usuário deverá logar novamente.
 }
 

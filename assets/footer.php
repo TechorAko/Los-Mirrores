@@ -1,3 +1,6 @@
+<?php
+    require_once "http://" . $_SERVER['SERVER_NAME'] . "/Los-Mirrores/assets/bli/load_front";
+?>
 <!-- FOOTER -->
 <footer id="footer">
 <!-- top footer -->
@@ -6,55 +9,39 @@
     <div class="container">
         <!-- row -->
         <div class="row">
-            <div class="col-md-3 col-xs-6">
+            <div class="col-md-4 col-xs-6">
                 <div class="footer">
-                    <h3 class="footer-title">About Us</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut.</p>
+                    <h3 class="footer-title">Sobre</h3>
+                    <p>Nós somos um grupo de trabalho da disciplina de Tecnologias para Desenvolvimento de Sistemas e este, é o nosso projeto com a temática de e-commerce.</p>
                     <ul class="footer-links">
-                        <li><a href="#"><i class="fa fa-map-marker"></i>1734 Stonecoal Road</a></li>
-                        <li><a href="#"><i class="fa fa-phone"></i>+021-95-51-84</a></li>
-                        <li><a href="#"><i class="fa fa-envelope-o"></i>email@email.com</a></li>
+                        <li><a href="https://github.com/TechorAko/Los-Mirrores" target="_blank"><i class="fa fa-map-marker"></i>Github</a></li>
+                        <li><a href="https://wa.me/553299770841" target="_blank"><i class="fa fa-phone"></i>Whatsapp</a></li>
                     </ul>
                 </div>
             </div>
 
-            <div class="col-md-3 col-xs-6">
+            <div class="col-md-4 col-xs-6">
                 <div class="footer">
-                    <h3 class="footer-title">Categories</h3>
+                    <h3 class="footer-title">Categorias</h3>
                     <ul class="footer-links">
-                        <li><a href="#">Hot deals</a></li>
-                        <li><a href="#">Laptops</a></li>
-                        <li><a href="#">Smartphones</a></li>
-                        <li><a href="#">Cameras</a></li>
-                        <li><a href="#">Accessories</a></li>
+                        <?php foreach($ecommerce->buscar('categoria', 'cat_id, cat_nome') as $categoria) { ?>
+                            <li><a href="#"><?=$categoria['cat_nome']?></a></li>
+                        <?php }?>
                     </ul>
                 </div>
             </div>
 
             <div class="clearfix visible-xs"></div>
 
-            <div class="col-md-3 col-xs-6">
-                <div class="footer">
-                    <h3 class="footer-title">Information</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Contact Us</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Orders and Returns</a></li>
-                        <li><a href="#">Terms & Conditions</a></li>
-                    </ul>
-                </div>
-            </div>
 
-            <div class="col-md-3 col-xs-6">
+            <div class="col-md-4 col-xs-6">
                 <div class="footer">
-                    <h3 class="footer-title">Service</h3>
+                    <h3 class="footer-title">Serviços</h3>
                     <ul class="footer-links">
-                        <li><a href="#">My Account</a></li>
-                        <li><a href="#">View Cart</a></li>
-                        <li><a href="#">Wishlist</a></li>
-                        <li><a href="#">Track My Order</a></li>
-                        <li><a href="#">Help</a></li>
+                        <li><a href="#">Minha conta</a></li>
+                        <li><a href="#">Ver carrinho</a></li>
+                        <li><a href="#">Meus pedidos</a></li>
+                        <li><a href="#">Categorias</a></li>
                     </ul>
                 </div>
             </div>

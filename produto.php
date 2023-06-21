@@ -1,10 +1,14 @@
 <?php
     require_once "http://" . $_SERVER['SERVER_NAME'] . "/Los-Mirrores/assets/bli/load_front";
+
+	if(!isset($_GET["p"])) { header('Location: http://' . $_SERVER['SERVER_NAME'] . '/Los-Mirrores/'); die(); }
+
+	$produto = is_array($ecommerce->buscar('produto', '*', ['prod_id' => $_GET['p']])) ? $ecommerce->buscar('produto', '*', ['prod_id' => $_GET['p']])[0] : NULL;
 ?>
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>Electro - HTML Ecommerce Template</title>
+		<title><?php if(is_array($produto)) { echo $produto['prod_nome'] . ' - Los Mirrores'; } else { echo 'Produto não encontrado - Los Mirrores'; } ?></title>
 		<?php
 			include_once "http://" . $_SERVER['SERVER_NAME'] . "/Los-Mirrores/assets/bli/bootstrap/"; 
 			include_once "http://" . $_SERVER['SERVER_NAME'] . "/Los-Mirrores/assets/header.php";
@@ -22,11 +26,24 @@
 				<div class="row">
 					<div class="col-md-12">
 						<ul class="breadcrumb-tree">
-							<li><a href="#">Home</a></li>
-							<li><a href="#">All Categories</a></li>
-							<li><a href="#">Accessories</a></li>
-							<li><a href="#">Headphones</a></li>
-							<li class="active">Product name goes here</li>
+							<li><a href="#">Produtos</a></li>
+							<li><a href="#">Todas as Categorias</a></li>
+							<?php if(!empty($produto)) { ?>
+								<li><a href="#"><?=$ecommerce->buscar('categoria', 'cat_nome', ['cat_id' => $produto['cat_id']])[0]['cat_nome']?></a></li>
+								<li class="active">
+								<?php
+
+									$max_name_length = 100;
+
+									if(strlen($produto['prod_nome']) < $max_name_length) {
+										echo $produto['prod_nome'];
+									} else {
+										echo substr($produto['prod_nome'], 0, $max_name_length)."...";
+									}
+
+								?>
+								</li>
+							<?php } else { ?><li><a href="#">Não encontrado</a></li><?php } ?>
 						</ul>
 					</div>
 				</div>
@@ -42,24 +59,15 @@
 			<div class="container">
 				<!-- row -->
 				<div class="row">
+					<?php $produto_galeria = is_array($ecommerce->buscar('produto_galeria', 'img_link', ['prod_id' => $_GET['p']])) ? $ecommerce->buscar('produto_galeria', 'img_link', ['prod_id' => $_GET['p']]) : NULL ?>
 					<!-- Product main img -->
 					<div class="col-md-5 col-md-push-2">
 						<div id="product-main-img">
+						<?php if(is_array($produto)) { foreach($produto_galeria as $imagem) { ?>
 							<div class="product-preview">
-								<img src="./img/product01.png" alt="">
+								<img src="<?=$imagem['img_link']?>" alt="Imagem do produto" height="500px" style="object-fit: contain; object-position: 50% 50%;">
 							</div>
-
-							<div class="product-preview">
-								<img src="./img/product03.png" alt="">
-							</div>
-
-							<div class="product-preview">
-								<img src="./img/product06.png" alt="">
-							</div>
-
-							<div class="product-preview">
-								<img src="./img/product08.png" alt="">
-							</div>
+						<?php } } ?>
 						</div>
 					</div>
 					<!-- /Product main img -->
@@ -67,21 +75,11 @@
 					<!-- Product thumb imgs -->
 					<div class="col-md-2  col-md-pull-5">
 						<div id="product-imgs">
-							<div class="product-preview">
-								<img src="./img/product01.png" alt="">
-							</div>
-
-							<div class="product-preview">
-								<img src="./img/product03.png" alt="">
-							</div>
-
-							<div class="product-preview">
-								<img src="./img/product06.png" alt="">
-							</div>
-
-							<div class="product-preview">
-								<img src="./img/product08.png" alt="">
-							</div>
+							<?php if(is_array($produto)) { foreach($produto_galeria as $imagem) { ?>
+								<div class="product-preview">
+									<img src="<?=$imagem['img_link']?>" alt="Imagem do produto" height="125px" style="object-fit: contain; object-position: 50% 50%;">
+								</div>
+							<?php } } ?>
 						</div>
 					</div>
 					<!-- /Product thumb imgs -->
@@ -89,111 +87,46 @@
 					<!-- Product details -->
 					<div class="col-md-5">
 						<div class="product-details">
-							<h2 class="product-name">product name goes here</h2>
+							<h2 class="product-name"><?=$produto['prod_nome']?></h2>
 							<div>
-								<div class="product-rating">
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star-o"></i>
-								</div>
-								<a class="review-link" href="#">10 Review(s) | Add your review</a>
+								<h3 class="product-price">R$<?php if(empty($produto['prod_dscnt'])) { echo $produto['prod_preco']; } else { echo round($produto['prod_preco'] - ($produto['prod_preco'] * ($produto['prod_dscnt'] * 0.01)), 2).' <del class="product-old-price">R$'. $produto['prod_preco'] .'</del>'; } ?></del></h3>
+								<span class="product-available"><?php if($produto['prod_qtde'] > 0) { echo "Em estoque"; } else { echo 'Fora de estoque'; } ?></span>
 							</div>
-							<div>
-								<h3 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h3>
-								<span class="product-available">In Stock</span>
-							</div>
-							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-
-							<div class="product-options">
-								<label>
-									Size
-									<select class="input-select">
-										<option value="0">X</option>
-									</select>
-								</label>
-								<label>
-									Color
-									<select class="input-select">
-										<option value="0">Red</option>
-									</select>
-								</label>
-							</div>
+							<p><?=$produto['prod_desc']?></p>
 
 							<div class="add-to-cart">
-								<div class="qty-label">
-									Qty
-									<div class="input-number">
-										<input type="number">
-										<span class="qty-up">+</span>
-										<span class="qty-down">-</span>
+								<form action="<?="http://" . $_SERVER['SERVER_NAME'] . "/Los-Mirrores/produto.php?p=" . $produto['prod_id']?>" action="POST">
+									<div class="row">
+										<div class="qty-label">
+											Quantidade: 
+											<div class="input-number">
+												<input type="number" name="qtde" value="1" min="1" max="<?=$produto['prod_qtde']?>">
+												<span class="qty-up">+</span>
+												<span class="qty-down">-</span>
+											</div>
+										</div>
 									</div>
-								</div>
-								<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+									<div class="row text-center" style="margin-top: 25px;">
+										<button class="add-to-cart-btn" type="submit" name="addcarrinho" value="<?=$produto['prod_id']?>"><i class="fa fa-shopping-cart"></i>Adicionar ao carrinho</button>
+									</div>
+								</form>
 							</div>
 
-							<ul class="product-btns">
-								<li><a href="#"><i class="fa fa-heart-o"></i> add to wishlist</a></li>
-								<li><a href="#"><i class="fa fa-exchange"></i> add to compare</a></li>
-							</ul>
-
 							<ul class="product-links">
-								<li>Category:</li>
-								<li><a href="#">Headphones</a></li>
-								<li><a href="#">Accessories</a></li>
-							</ul>
+								<li>Categorias:</li>
+								<?php
+									$categorias = is_array($ecommerce->buscar('produto_filtro, filtro, categoria', 'categoria.cat_id, cat_nome', ['produto_filtro.fltr_id' => 'filtro.fltr_id', 'filtro.cat_id' => 'categoria.cat_id', 'produto_filtro.prod_id' => $_GET['p']], FALSE, ['cat_nome' => 'ASC'])) ? $ecommerce->buscar('produto_filtro, filtro, categoria', 'categoria.cat_id, cat_nome', ['produto_filtro.fltr_id' => 'filtro.fltr_id', 'filtro.cat_id' => 'categoria.cat_id', 'produto_filtro.prod_id' => $_GET['p']], FALSE, ['cat_nome' => 'ASC']) : $ecommerce->buscar('categoria', 'categoria.cat_id, cat_nome', ['cat_id' => $produto['cat_id']]);
 
-							<ul class="product-links">
-								<li>Share:</li>
-								<li><a href="#"><i class="fa fa-facebook"></i></a></li>
-								<li><a href="#"><i class="fa fa-twitter"></i></a></li>
-								<li><a href="#"><i class="fa fa-google-plus"></i></a></li>
-								<li><a href="#"><i class="fa fa-envelope"></i></a></li>
+									if(is_array($produto)) { foreach($categorias as $categoria) { if($categoria['cat_nome'] == 'Marcas') { continue; } ?>
+										<li><a href="#"><?=$categoria['cat_nome']?></a></li>
+								<?php } }  ?>
 							</ul>
 
 						</div>
 					</div>
 					<!-- /Product details -->
 
-					<!-- Product tab -->
-					<div class="col-md-12">
-						<div id="product-tab">
-							<!-- product tab nav -->
-							<ul class="tab-nav">
-								<li class="active"><a data-toggle="tab" href="#tab1">Description</a></li>
-								<li><a data-toggle="tab" href="#tab2">Details</a></li>
-								<li><a data-toggle="tab" href="#tab3">Reviews (3)</a></li>
-							</ul>
-							<!-- /product tab nav -->
 
-							<!-- product tab content -->
-							<div class="tab-content">
-								<!-- tab1  -->
-								<div id="tab1" class="tab-pane fade in active">
-									<div class="row">
-										<div class="col-md-12">
-											<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-										</div>
-									</div>
-								</div>
-								<!-- /tab1  -->
-
-								<!-- tab2  -->
-								<div id="tab2" class="tab-pane fade in">
-									<div class="row">
-										<div class="col-md-12">
-											<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-										</div>
-									</div>
-								</div>
-								<!-- /tab2  -->
-
-							</div>
-							<!-- /product tab content  -->
-						</div>
-					</div>
-					<!-- /product tab -->
 				</div>
 				<!-- /row -->
 			</div>
@@ -210,66 +143,48 @@
 
 					<div class="col-md-12">
 						<div class="section-title text-center">
-							<h3 class="title">Related Products</h3>
+							<h3 class="title">Produtos Relacionados</h3>
 						</div>
 					</div>
 
-					<!-- product -->
-					<div class="col-md-3 col-xs-6">
-						<div class="product">
-							<div class="product-img">
-								<img src="./img/product01.png" alt="">
-								<div class="product-label">
-									<span class="sale">-30%</span>
-								</div>
-							</div>
-							<div class="product-body">
-								<p class="product-category">Category</p>
-								<h3 class="product-name"><a href="#">product name goes here</a></h3>
-								<h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-								<div class="product-rating">
-								</div>
-								<div class="product-btns">
-									<button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to wishlist</span></button>
-									<button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
-									<button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
-								</div>
-							</div>
-							<div class="add-to-cart">
-								<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
-							</div>
-						</div>
-					</div>
-					<!-- /product -->
+					<?php
 
+						$relacionados = $ecommerce->fetch_multiarray("SELECT cat_nome, prod_id, prod_nome, prod_preco, prod_dscnt, prod_criado FROM categoria, produto WHERE produto.cat_id = categoria.cat_id ORDER BY prod_criado DESC LIMIT 4", MYSQLI_ASSOC);
+						foreach($relacionados as $produto) {
+
+					?>
 					<!-- product -->
 					<div class="col-md-3 col-xs-6">
 						<div class="product">
-							<div class="product-img">
-								<img src="./img/product02.png" alt="">
-								<div class="product-label">
-									<span class="new">NEW</span>
+							<a href="<?="http://" . $_SERVER['SERVER_NAME'] . "/Los-Mirrores/produto.php?p=" . $produto['prod_id']?>">
+								<div class="product-img">
+								<img src="<?=$ecommerce->buscar('produto_galeria', 'img_link', ['prod_id' => $produto['prod_id']])[0]['img_link']?>" alt="" height="250px;" style="object-fit: contain; object-position: 50% 50%;">
+									<div class="product-label">
+										<?php if(!empty($produto['prod_dscnt'])) { ?><span class="sale">-<?=$produto['prod_dscnt']?>%</span><?php } ?>
+									</div>
 								</div>
-							</div>
-							<div class="product-body">
-								<p class="product-category">Category</p>
-								<h3 class="product-name"><a href="#">product name goes here</a></h3>
-								<h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-								<div class="product-rating">
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
+								<div class="product-body">
+									<p class="product-category"><?=rtrim($produto['cat_nome'], 'es')?></p>
+									<h3 class="product-name">
+										<?php
+
+										$max_name_length = 35;
+
+										if(strlen($produto['prod_nome']) < $max_name_length) {
+											echo $produto['prod_nome'];
+										} else {
+											echo substr($produto['prod_nome'], 0, $max_name_length)."...";
+										}
+
+										?>
+									</h3>
+									<h4 class="product-price">R$<?php if(empty($produto['prod_dscnt'])) { echo $produto['prod_preco']; } else { echo round($produto['prod_preco'] - ($produto['prod_preco'] * ($produto['prod_dscnt'] * 0.01)), 2).' <del class="product-old-price">R$'. $produto['prod_preco'] .'</del>'; } ?></h4>
 								</div>
-								<div class="product-btns">
-									<button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to wishlist</span></button>
-									<button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
-									<button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
-								</div>
-							</div>
+							</a>
 							<div class="add-to-cart">
-								<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+								<form action="<?="http://" . $_SERVER['SERVER_NAME'] . "/Los-Mirrores/produto.php?p=" . $produto['prod_id']?>" method="POST">
+									<button class="add-to-cart-btn" style="padding: 10px; padding-top: 8px;" type="submit" name="addcarrinho" value="<?=$produto['prod_id']?>">Adicionar ao carrinho</button>
+								</form>
 							</div>
 						</div>
 					</div>
@@ -277,60 +192,7 @@
 
 					<div class="clearfix visible-sm visible-xs"></div>
 
-					<!-- product -->
-					<div class="col-md-3 col-xs-6">
-						<div class="product">
-							<div class="product-img">
-								<img src="./img/product03.png" alt="">
-							</div>
-							<div class="product-body">
-								<p class="product-category">Category</p>
-								<h3 class="product-name"><a href="#">product name goes here</a></h3>
-								<h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-								<div class="product-rating">
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star-o"></i>
-								</div>
-								<div class="product-btns">
-									<button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to wishlist</span></button>
-									<button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
-									<button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
-								</div>
-							</div>
-							<div class="add-to-cart">
-								<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
-							</div>
-						</div>
-					</div>
-					<!-- /product -->
-
-					<!-- product -->
-					<div class="col-md-3 col-xs-6">
-						<div class="product">
-							<div class="product-img">
-								<img src="./img/product04.png" alt="">
-							</div>
-							<div class="product-body">
-								<p class="product-category">Category</p>
-								<h3 class="product-name"><a href="#">product name goes here</a></h3>
-								<h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-								<div class="product-rating">
-								</div>
-								<div class="product-btns">
-									<button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to wishlist</span></button>
-									<button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
-									<button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
-								</div>
-							</div>
-							<div class="add-to-cart">
-								<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
-							</div>
-						</div>
-					</div>
-					<!-- /product -->
+					<?php } ?>
 
 				</div>
 				<!-- /row -->
